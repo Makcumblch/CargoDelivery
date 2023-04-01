@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	cargodelivery "github.com/Makcumblch/CargoDelivery"
 	"github.com/gin-gonic/gin"
@@ -40,91 +41,91 @@ type getAllOrdersResponse struct {
 }
 
 func (h *Handler) getAllOrders(c *gin.Context) {
-	// projectId, err := getProjectId(c)
-	// if err != nil {
-	// 	return
-	// }
+	clientId, err := getClientId(c)
+	if err != nil {
+		return
+	}
 
-	// cars, err := h.services.ICar.GetAllCars(projectId)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	orders, err := h.services.IOrder.GetAllOrders(clientId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	// c.JSON(http.StatusOK, getAllCarsResponse{
-	// 	Data: cars,
-	// })
+	c.JSON(http.StatusOK, getAllOrdersResponse{
+		Data: orders,
+	})
 }
 
 func (h *Handler) getOrderById(c *gin.Context) {
-	// projectId, err := getProjectId(c)
-	// if err != nil {
-	// 	return
-	// }
+	clientId, err := getClientId(c)
+	if err != nil {
+		return
+	}
 
-	// carId, err := strconv.Atoi(c.Param("id"))
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusBadRequest, "invalid car id")
-	// 	return
-	// }
+	orderId, err := strconv.Atoi(c.Param("idOrder"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid order id")
+		return
+	}
 
-	// car, err := h.services.ICar.GetCarById(projectId, carId)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	order, err := h.services.IOrder.GetOrderById(clientId, orderId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	// c.JSON(http.StatusOK, car)
+	c.JSON(http.StatusOK, order)
 }
 
 func (h *Handler) updateOrder(c *gin.Context) {
-	// projectId, err := getProjectId(c)
-	// if err != nil {
-	// 	return
-	// }
+	clientId, err := getClientId(c)
+	if err != nil {
+		return
+	}
 
-	// carId, err := strconv.Atoi(c.Param("id"))
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusBadRequest, "invalid car id")
-	// 	return
-	// }
+	orderId, err := strconv.Atoi(c.Param("idOrder"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid order id")
+		return
+	}
 
-	// var input cargodelivery.UpdateCar
-	// if err := c.BindJSON(&input); err != nil {
-	// 	newErrorResponse(c, http.StatusBadRequest, err.Error())
-	// 	return
-	// }
+	var input cargodelivery.UpdateOrder
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
 
-	// err = h.services.ICar.UpdateCar(projectId, carId, input)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	err = h.services.IOrder.UpdateOrder(clientId, orderId, input)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	// c.JSON(http.StatusOK, statusResponse{
-	// 	Status: "ok",
-	// })
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
 }
 
 func (h *Handler) deleteOrder(c *gin.Context) {
-	// projectId, err := getProjectId(c)
-	// if err != nil {
-	// 	return
-	// }
+	clientId, err := getClientId(c)
+	if err != nil {
+		return
+	}
 
-	// carId, err := strconv.Atoi(c.Param("id"))
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusBadRequest, "invalid car id")
-	// 	return
-	// }
+	orderId, err := strconv.Atoi(c.Param("idOrder"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid order id")
+		return
+	}
 
-	// err = h.services.ICar.DeleteCar(projectId, carId)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	err = h.services.IOrder.DeleteOrder(clientId, orderId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	// c.JSON(http.StatusOK, statusResponse{
-	// 	Status: "ok",
-	// })
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
 }

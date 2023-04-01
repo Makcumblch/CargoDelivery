@@ -77,7 +77,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 						orders := clientsId.Group("/orders")
 						{
 							orders.GET("/", h.getAllOrders)
-							orders.GET("/idOrder", h.getOrderById)
+							orders.GET("/:idOrder", h.getOrderById)
 							ordersWrite := orders.Group("/", h.accessWrite)
 							{
 								ordersWrite.POST("/", h.createOrder)

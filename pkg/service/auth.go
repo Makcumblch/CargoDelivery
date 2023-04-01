@@ -46,6 +46,10 @@ func (s *AuthService) CreateUser(user cargodelivery.User) (int, error) {
 	return s.repo.CreateUser(user)
 }
 
+func (s *AuthService) GetUserById(userId int) (cargodelivery.User, error) {
+	return s.repo.GetUserById(userId)
+}
+
 func (s *AuthService) GenerateToken(username, password string) (string, error) {
 	user, err := s.repo.GetUser(username)
 	if err != nil {

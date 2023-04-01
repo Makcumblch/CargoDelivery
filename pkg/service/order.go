@@ -24,3 +24,22 @@ func (o *OrderService) CreateOrder(projectId, clientId int, order cargodelivery.
 
 	return o.repoOrder.CreateOrder(clientId, order)
 }
+
+func (o *OrderService) GetAllOrders(clientId int) ([]cargodelivery.Order, error) {
+	return o.repoOrder.GetAllOrders(clientId)
+}
+
+func (o *OrderService) GetOrderById(clientId, orderId int) (cargodelivery.Order, error) {
+	return o.repoOrder.GetOrderById(clientId, orderId)
+}
+
+func (o *OrderService) DeleteOrder(clientId, orderId int) error {
+	return o.repoOrder.DeleteOrder(clientId, orderId)
+}
+
+func (o *OrderService) UpdateOrder(clientId, orderId int, input cargodelivery.UpdateOrder) error {
+	if err := input.ValidateUpdateOrder(); err != nil {
+		return err
+	}
+	return o.repoOrder.UpdateOrder(clientId, orderId, input)
+}

@@ -37,6 +37,12 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
+	_, err = h.services.IAuthorization.GetUserById(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	c.Set(userCtx, userId)
 }
 

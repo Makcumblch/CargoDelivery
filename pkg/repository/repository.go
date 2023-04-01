@@ -8,6 +8,7 @@ import (
 type IAuthorization interface {
 	CreateUser(user cargodelivery.User) (int, error)
 	GetUser(username string) (cargodelivery.User, error)
+	GetUserById(userId int) (cargodelivery.User, error)
 }
 
 type IProject interface {
@@ -45,6 +46,10 @@ type IClient interface {
 
 type IOrder interface {
 	CreateOrder(clientId int, order cargodelivery.Order) (int, error)
+	GetAllOrders(clientId int) ([]cargodelivery.Order, error)
+	GetOrderById(clientId, orderId int) (cargodelivery.Order, error)
+	DeleteOrder(clientId, orderId int) error
+	UpdateOrder(clientId, orderId int, input cargodelivery.UpdateOrder) error
 }
 
 type Repository struct {

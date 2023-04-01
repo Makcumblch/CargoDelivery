@@ -9,6 +9,7 @@ type IAuthorization interface {
 	CreateUser(user cargodelivery.User) (int, error)
 	GenerateToken(username, password string) (string, error)
 	ParseToken(accessToken string) (int, error)
+	GetUserById(userId int) (cargodelivery.User, error)
 }
 
 type IProject interface {
@@ -46,6 +47,10 @@ type IClient interface {
 
 type IOrder interface {
 	CreateOrder(projectId, clientId int, order cargodelivery.Order) (int, error)
+	GetAllOrders(clientId int) ([]cargodelivery.Order, error)
+	GetOrderById(clientId, orderId int) (cargodelivery.Order, error)
+	DeleteOrder(clientId, orderId int) error
+	UpdateOrder(clientId, orderId int, input cargodelivery.UpdateOrder) error
 }
 
 type Service struct {
