@@ -20,7 +20,8 @@ interface IProjectsContext {
     changeProject: (id: number | null, values: object) => void,
     addProject: (name: string) => void,
     currentProject: Project | null,
-    getProjectById: (id: number) => Project | undefined
+    getProjectById: (id: number) => Project | undefined,
+    isLoading: boolean,
 }
 
 export const ProjectsContext = createContext<IProjectsContext>({
@@ -31,7 +32,8 @@ export const ProjectsContext = createContext<IProjectsContext>({
     changeProject: () => { },
     addProject: () => { },
     currentProject: null,
-    getProjectById: () => undefined
+    getProjectById: () => undefined,
+    isLoading: true
 })
 
 const projectStorage = 'project'
@@ -42,17 +44,23 @@ export const Projects = ({ children }: ProjectsProps) => {
     const [projects, setProjects] = useState<Project[]>([])
     const [currentProjectId, setCurrentProjectId] = useState<number | null>(null)
     const [currentProject, setCurrentProject] = useState<Project | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     useEffect(() => {
         const getProjects = async () => {
             try {
-
-
+                setIsLoading(true)
                 let projectsData = await request('api/projects', 'GET', null, {
                     Authorization: `Bearer ${token}`
                 })
+                setIsLoading(false)
                 projectsData = projectsData.data as Project[]
-                if (!projectsData) return
+                if (!projectsData) {
+                    setProjects([])
+                    setCurrentProjectId(null)
+                    setCurrentProject(null)
+                    return
+                }
                 setProjects(projectsData)
                 setCurrentProjectId(projectsData[0]?.id ?? null)
                 setCurrentProject(projectsData[0] ?? null)
@@ -64,7 +72,9 @@ export const Projects = ({ children }: ProjectsProps) => {
                 if (!project) return
                 setCurrentProjectId(project.id)
                 setCurrentProject(project)
-            } catch (e) { }
+            } catch (e) {
+                setIsLoading(false)
+            }
         }
         getProjects()
     }, [token, request])
@@ -153,6 +163,7 @@ export const Projects = ({ children }: ProjectsProps) => {
             changeProject,
             addProject,
             getProjectById,
+            isLoading
         }}>
             {children}
         </ProjectsContext.Provider>

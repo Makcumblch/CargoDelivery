@@ -12,7 +12,7 @@ export const DropdownMenu = ({ btnContent = null, items }: DropdownMenuProps) =>
         <>
             <div className="relative flex items-start">
                 <button
-                    className="flex items-center rounded text-center hover:bg-gray-500"
+                    className="flex items-center rounded text-center bg-slate-500 hover:bg-slate-400"
                     onClick={() => setIsOpen(prev => !prev)}
                 >
                     {btnContent ? btnContent :

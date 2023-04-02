@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from "react";
-import { ProjectsContext } from "../contexts/ProjectsContext";
-import { DropdownMenu } from "./DropdownMenu";
+import { ProjectsContext } from "../../contexts/ProjectsContext";
+import { DropdownMenu } from "../DropdownMenu";
 
 interface InputProjectNameProps {
     btnContent: React.ReactNode | null,

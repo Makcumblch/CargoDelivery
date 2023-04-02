@@ -45,24 +45,24 @@ export const ModalWindow = ({ children }: ModalWindowProps) => {
                 {children}
             </ModalWindowContext.Provider>
             <div
-                className={`${isOpen ? '' : 'hidden'} absolute top-0 z-[1001] left-0 w-full h-full flex flex-col justify-center min-h-screen backdrop-blur-sm overflow-hidden`}
+                className={`${isOpen ? '' : 'hidden'} absolute top-0 z-[1001] left-0 w-full h-full flex flex-col justify-center min-h-screen backdrop-blur-sm overflow-hidden shadow-lg`}
                 onClick={() => setIsOpen(false)}
             >
-                <div className="w-full p-4 m-auto bg-slate-700 rounded-md shadow-md md:max-w-md">
+                <div className="w-full p-4 m-auto z-[1002] bg-slate-700 rounded-md shadow-md md:max-w-md" onClick={e => e.stopPropagation()}>
                     <h1 className="text-2xl font-semibold text-center text-white truncate">{title}</h1>
                     <div className='text-center text-slate-300 mt-2 truncate'>{content}</div>
                     <div className='flex justify-around mt-2'>
                         <button
+                            form='form'
+                            type='submit'
                             className="w-36 px-4 py-1.5 tracking-wide text-white transition-colors duration-200 transform bg-cyan-700 rounded-md hover:bg-cyan-600 focus:outline-none focus:bg-cyan-600"
                             onClick={() => {
                                 onOk()
-                                setIsOpen(false)
                             }}>Ок</button>
                         <button
                             className="w-36 px-4 py-1.5 tracking-wide text-white transition-colors duration-200 transform bg-cyan-700 rounded-md hover:bg-cyan-600 focus:outline-none focus:bg-cyan-600"
                             onClick={() => {
                                 onCancel()
-                                setIsOpen(false)
                             }}>Отмена</button>
                     </div>
                 </div>
