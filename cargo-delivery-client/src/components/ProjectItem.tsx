@@ -1,35 +1,33 @@
-import { useMemo } from "react";
-import { Project } from "../contexts/ProjectsContext";
+import { useCallback, useContext, useMemo } from "react";
+import { Project, ProjectsContext } from "../contexts/ProjectsContext";
 import { DropdownMenu } from "./DropdownMenu";
+import { ModalWindowContext } from "../contexts/ModalWindowContext";
+import InputProjectNameProps from "./InputProjectName";
 
 interface IProjectItemPriops extends Project {
     selected: boolean,
-    onDeleteClick: (id: number) => void,
-    onChange: (id: number, values: object) => void,
-    onSelect: (id: number) => void,
 }
 
-export const ProjectItem = ({ id, selected, name, access, onChange, onSelect, onDeleteClick }: IProjectItemPriops) => {
+export const ProjectItem = ({ id, selected, name, access }: IProjectItemPriops) => {
+    const { open } = useContext(ModalWindowContext)
+    const { setProject, delProject, getProjectById } = useContext(ProjectsContext)
 
-    const renameProject = () => {
-
-    }
-
-    const delProject = () => {
-
-    }
-
-    const changeProjects = () => {
-
-    }
+    const del = useCallback(() => {
+        open({
+            title: `Удалить проект ${getProjectById(id)?.name}?`,
+            content: null,
+            onOk: () => () => delProject(id),
+            onCancel: () => () => { }
+        })
+    }, [delProject, getProjectById, id, open])
 
     const itemsMenu = useMemo(() => {
         const items = []
         switch (access) {
             case 'owner':
                 items.push(
-                    <button onClick={renameProject}>Переименовать</button>,
-                    <button onClick={delProject}>Удалит</button>
+                    <InputProjectNameProps id={id} btnContent={'Переименовать'} mode="change" />,
+                    <button className="w-full" onClick={del}>Удалить</button>
                 )
                 break
             default:
@@ -39,15 +37,17 @@ export const ProjectItem = ({ id, selected, name, access, onChange, onSelect, on
                 break
         }
         return items
-    }, [access])
+    }, [access, id, del])
 
     return (
         <div
-            className={`flex items-center text-slate-300 hover:bg-slate-600 p-2 justify-between ${selected && 'bg-slate-600'}`}
-            onClick={() => onSelect(id)}
+            className={`flex items-center w-60 text-slate-300 hover:bg-slate-600 p-2 justify-between ${selected && 'bg-slate-600'}`}
+            onClick={() => setProject(id)}
         >
-            <div>{name}</div>
-            <DropdownMenu items={itemsMenu} />
+            <div className="flex-1 truncate">{name}</div>
+            <div className="w-9">
+                <DropdownMenu items={itemsMenu} />
+            </div>
         </div>
     );
 }

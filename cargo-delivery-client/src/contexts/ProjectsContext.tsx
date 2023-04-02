@@ -17,8 +17,10 @@ interface IProjectsContext {
     currentProjectId: number | null,
     setProject: (id: number) => void,
     delProject: (id: number) => void,
-    changeProject: (id: number, values: object) => void,
+    changeProject: (id: number | null, values: object) => void,
     addProject: (name: string) => void,
+    currentProject: Project | null,
+    getProjectById: (id: number) => Project | undefined
 }
 
 export const ProjectsContext = createContext<IProjectsContext>({
@@ -28,6 +30,8 @@ export const ProjectsContext = createContext<IProjectsContext>({
     delProject: () => { },
     changeProject: () => { },
     addProject: () => { },
+    currentProject: null,
+    getProjectById: () => undefined
 })
 
 const projectStorage = 'project'
@@ -37,10 +41,13 @@ export const Projects = ({ children }: ProjectsProps) => {
     const { request } = useHttp()
     const [projects, setProjects] = useState<Project[]>([])
     const [currentProjectId, setCurrentProjectId] = useState<number | null>(null)
+    const [currentProject, setCurrentProject] = useState<Project | null>(null)
 
     useEffect(() => {
         const getProjects = async () => {
             try {
+
+
                 let projectsData = await request('api/projects', 'GET', null, {
                     Authorization: `Bearer ${token}`
                 })
@@ -48,6 +55,7 @@ export const Projects = ({ children }: ProjectsProps) => {
                 if (!projectsData) return
                 setProjects(projectsData)
                 setCurrentProjectId(projectsData[0]?.id ?? null)
+                setCurrentProject(projectsData[0] ?? null)
                 const strId = localStorage.getItem(projectStorage)
                 if (!strId) return
                 const id = parseInt(strId)
@@ -55,6 +63,7 @@ export const Projects = ({ children }: ProjectsProps) => {
                 const project = projectsData.find((pr: Project) => pr.id === id)
                 if (!project) return
                 setCurrentProjectId(project.id)
+                setCurrentProject(project)
             } catch (e) { }
         }
         getProjects()
@@ -64,6 +73,7 @@ export const Projects = ({ children }: ProjectsProps) => {
         const project = projects.find((pr) => pr.id === id)
         if (!project) return
         setCurrentProjectId(project.id)
+        setCurrentProject(project)
         localStorage.setItem(projectStorage, project.id.toString())
     }
 
@@ -74,23 +84,38 @@ export const Projects = ({ children }: ProjectsProps) => {
             })
             if (data.status !== 'ok') return
             let index = 0
-            const newProjects = projects.filter((pr, i) => {
-                if (pr.id !== id) return true
-                index = i - 1
-                return false
+            setProjects(prev => {
+                const newProjects: Project[] = []
+                for (let i = 0; i < prev.length; ++i) {
+                    if (prev[i].id !== id) {
+                        newProjects.push({ ...prev[i] })
+                    } else {
+                        index = i - 1
+                    }
+                }
+                const project = newProjects[index < 0 ? 0 : index]
+                setCurrentProjectId(project?.id ?? null)
+                setCurrentProject(project ?? null)
+                return newProjects
             })
-            setProjects(newProjects)
-            const project = newProjects[index < 0 ? 0 : index]
-            setCurrentProjectId(project?.id ?? null)
         } catch (e) { }
     }
 
-    const changeProject = (id: number, values: object) => {
+    const changeProject = async (id: number | null, values: object) => {
+        if (id === null) return
         const projectIndex = projects.findIndex((pr) => pr.id === id)
         if (projectIndex === -1) return
-        const newProjects = [...projects]
-        newProjects[projectIndex] = { ...newProjects[projectIndex], ...values }
-        setProjects(newProjects)
+        try {
+            const data = await request(`api/projects/${id}`, 'PUT', values, {
+                Authorization: `Bearer ${token}`
+            })
+            if (data.status !== 'ok') return
+            setProjects(prev => {
+                const newProjects = [...prev]
+                newProjects[projectIndex] = { ...newProjects[projectIndex], ...values }
+                return newProjects
+            })
+        } catch (e) { }
     }
 
     const addProject = async (name: string) => {
@@ -98,25 +123,36 @@ export const Projects = ({ children }: ProjectsProps) => {
             const data = await request(`api/projects/`, 'POST', { name }, {
                 Authorization: `Bearer ${token}`
             })
-            const newProjects = [...projects]
-            newProjects.push({
+            const project = {
                 id: data.id,
                 name: name,
                 access: 'owner'
+            }
+            setProjects(prev => {
+                const newProjects = [...prev]
+                newProjects.push(project)
+                return newProjects
             })
-            setProjects(newProjects)
             setCurrentProjectId(data.id)
+            setCurrentProject(project)
         } catch (e) { }
+    }
+
+    const getProjectById = (id: number) => {
+        const project = projects.find((pr: Project) => pr.id === id)
+        return project
     }
 
     return (
         <ProjectsContext.Provider value={{
             projects,
             currentProjectId,
+            currentProject,
             setProject,
             delProject,
             changeProject,
             addProject,
+            getProjectById,
         }}>
             {children}
         </ProjectsContext.Provider>
