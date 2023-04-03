@@ -1,14 +1,15 @@
 import { useMemo, useState } from "react";
-import Cargos from "./CargosComponent";
+import CargosComponent from "./Cargos/CargosComponent";
+import CarsComponent from "./Cars/CarsComponent";
 
 const Tabs = () => {
     const [openTab, setOpenTab] = useState("Товары");
 
     const tabs = useMemo(() => {
         return [
-            { name: "Товары", content: <Cargos /> },
+            { name: "Товары", content: <CargosComponent /> },
             { name: "Клиенты", content: "Клиенты" },
-            { name: "Автомобили", content: "Автомобили" },
+            { name: "Автомобили", content: <CarsComponent /> },
             { name: "Маршруты", content: "Маршруты" },
         ]
     }, [])

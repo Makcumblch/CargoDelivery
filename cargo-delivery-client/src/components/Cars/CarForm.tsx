@@ -1,24 +1,24 @@
+import { Car } from "../../contexts/CarsContext";
 import { FormEvent, useState } from "react";
-import { Cargo } from "../contexts/CargosContext";
 
-interface CargoFormProps {
-    input: Cargo,
-    changeCargo: (id: number, value: object) => void
+interface CarFormProps {
+    input: Car,
+    changeCar: (id: number, value: object) => void
     close: () => void
 }
 
-const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
-    const [inputCargo, setInputCargo] = useState<Cargo>(input)
+const CarForm = ({ input, changeCar, close }: CarFormProps) => {
+    const [inputCar, setInputCar] = useState<Car>(input)
 
     const onChange = (field: string, value: any): void => {
-        setInputCargo((prev: Cargo) => {
+        setInputCar((prev: Car) => {
             return { ...prev, [field]: value }
         })
     }
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        changeCargo(inputCargo.id, inputCargo)
+        changeCar(inputCar.id, inputCar)
         close()
     }
 
@@ -27,7 +27,7 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
             <div>
                 <label htmlFor="name" className="block text-sm font-semibold text-slate-300">Название</label>
                 <input
-                    value={inputCargo.name}
+                    value={inputCar.name}
                     type="text"
                     name="name"
                     required
@@ -37,9 +37,21 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
                 />
             </div>
             <div>
+                <label htmlFor="loadCapacity" className="block text-sm font-semibold text-slate-300">Грузоподъемность (кг)</label>
+                <input
+                    value={inputCar.loadCapacity.toString()}
+                    type="text"
+                    name="loadCapacity"
+                    required
+                    placeholder="Введите грузоподъемность"
+                    className="block w-full px-4 py-2 mt-2 text-white bg-slate-600  rounded-md focus:ring-slate-800 focus:outline-none focus:ring focus:ring-opacity-40"
+                    onChange={(e) => onChange('loadCapacity', parseFloat(e.target.value))}
+                />
+            </div>
+            <div>
                 <label htmlFor="width" className="block text-sm font-semibold text-slate-300">Ширина (м)</label>
                 <input
-                    value={inputCargo.width}
+                    value={inputCar.width.toString()}
                     type="number"
                     name="width"
                     required
@@ -52,7 +64,7 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
             <div>
                 <label htmlFor="height" className="block text-sm font-semibold text-slate-300">Высота (м)</label>
                 <input
-                    value={inputCargo.height}
+                    value={inputCar.height.toString()}
                     type="number"
                     name="height"
                     required
@@ -65,7 +77,7 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
             <div>
                 <label htmlFor="length" className="block text-sm font-semibold text-slate-300">Длина (м)</label>
                 <input
-                    value={inputCargo.length}
+                    value={inputCar.length.toString()}
                     type="number"
                     name="length"
                     required
@@ -76,20 +88,20 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
                 />
             </div>
             <div>
-                <label htmlFor="weight" className="block text-sm font-semibold text-slate-300">Вес (кг)</label>
+                <label htmlFor="fuelConsumption" className="block text-sm font-semibold text-slate-300">Расход топлива (л/100км)</label>
                 <input
-                    value={inputCargo.weight}
+                    value={inputCar.fuelConsumption.toString()}
                     type="number"
-                    name="weight"
+                    name="fuelConsumption"
                     required
                     min={0}
-                    placeholder="Введите вес"
+                    placeholder="Введите расход топлива"
                     className="block w-full px-4 py-2 mt-2 text-white bg-slate-600  rounded-md focus:ring-slate-800 focus:outline-none focus:ring focus:ring-opacity-40"
-                    onChange={(e) => onChange('weight', parseFloat(e.target.value))}
+                    onChange={(e) => onChange('fuelConsumption', parseFloat(e.target.value))}
                 />
             </div>
         </form>
     );
 }
 
-export default CargoForm
+export default CarForm

@@ -19,7 +19,7 @@ func NewCargoPostgres(db *sqlx.DB) *CargoPostgres {
 func (c *CargoPostgres) CreateCargo(projectId int, cargo cargodelivery.Cargo) (int, error) {
 	var id int
 	createCarQuery := fmt.Sprintf("INSERT INTO %s (project_id, name, width, height, length, weight) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id", cargosTable)
-	row := c.db.QueryRow(createCarQuery, projectId, cargo.Name, cargo.Width, cargo.Height, cargo.Length, cargo.Weight)
+	row := c.db.QueryRow(createCarQuery, projectId, *cargo.Name, *cargo.Width, *cargo.Height, *cargo.Length, *cargo.Weight)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}

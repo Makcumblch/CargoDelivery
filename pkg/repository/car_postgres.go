@@ -19,7 +19,7 @@ func NewCarPostgres(db *sqlx.DB) *CarPostgres {
 func (c *CarPostgres) CreateCar(projectId int, car cargodelivery.Car) (int, error) {
 	var id int
 	createCarQuery := fmt.Sprintf("INSERT INTO %s (project_id, load_capacity, width, height, length, fuel_consumption, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id", carsTable)
-	row := c.db.QueryRow(createCarQuery, projectId, car.LoadCapacity, car.Width, car.Height, car.Length, car.FuelConsumption, car.Name)
+	row := c.db.QueryRow(createCarQuery, projectId, *car.LoadCapacity, *car.Width, *car.Height, *car.Length, *car.FuelConsumption, *car.Name)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}

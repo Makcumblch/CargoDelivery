@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { CargosContext } from "../contexts/CargosContext";
+import { CargosContext } from "../../contexts/CargosContext";
 import CargoItem from "./CargoItem";
-import Spinner from "./Spinner";
-import AddBtn from "./Btns/AddBtn";
-import { ModalWindowContext } from "../contexts/ModalWindowContext";
+import Spinner from "../Spinner";
+import AddBtn from "../Btns/AddBtn";
+import { ModalWindowContext } from "../../contexts/ModalWindowContext";
 import CargoForm from "./CargoForm";
 
 const CargosComponent = () => {

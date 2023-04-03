@@ -1,6 +1,7 @@
 import SideBar from "../components/SideBar";
 import Tabs from "../components/Tabs";
 import { Cargos } from "../contexts/CargosContext";
+import { Cars } from "../contexts/CarsContext";
 import { ModalWindow } from "../contexts/ModalWindowContext";
 
 function AppPage() {
@@ -10,7 +11,9 @@ function AppPage() {
                 <SideBar />
                 <main className="w-full bg-white">
                     <Cargos>
-                        <Tabs />
+                        <Cars>
+                            <Tabs />
+                        </Cars>
                     </Cargos>
                 </main>
             </div>

@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { Cargo, CargosContext } from "../contexts/CargosContext";
-import { ModalWindowContext } from "../contexts/ModalWindowContext";
-import DelBtn from "./Btns/DelBtn";
-import EditBtn from "./Btns/EditBtn";
+import { Cargo, CargosContext } from "../../contexts/CargosContext";
+import { ModalWindowContext } from "../../contexts/ModalWindowContext";
+import DelBtn from "../Btns/DelBtn";
+import EditBtn from "../Btns/EditBtn";
 import CargoForm from "./CargoForm";
 
 const CargoItem = ({ id, name, width, height, length, weight }: Cargo) => {
