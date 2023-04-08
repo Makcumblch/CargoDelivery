@@ -22,6 +22,7 @@ interface IProjectsContext {
     delCargo: (id: number) => void,
     changeCargo: (id: number | null, values: object) => void,
     addCargo: (id: number | null, values: object) => void,
+    getCargoById: (id: number) => Cargo | undefined,
 }
 
 export const CargosContext = createContext<IProjectsContext>({
@@ -30,6 +31,7 @@ export const CargosContext = createContext<IProjectsContext>({
     delCargo: () => { },
     changeCargo: () => { },
     addCargo: () => { },
+    getCargoById: () => undefined,
 })
 
 export const Cargos = ({ children }: CargosProps) => {
@@ -110,6 +112,11 @@ export const Cargos = ({ children }: CargosProps) => {
         } catch (e) { }
     }
 
+    const getCargoById = (id: number) => {
+        const cargo = cargos.find((pr: Cargo) => pr.id === id)
+        return cargo
+    }
+
     return (
         <CargosContext.Provider value={{
             cargos,
@@ -117,6 +124,7 @@ export const Cargos = ({ children }: CargosProps) => {
             delCargo,
             changeCargo,
             addCargo,
+            getCargoById,
         }}>
             {children}
         </CargosContext.Provider>

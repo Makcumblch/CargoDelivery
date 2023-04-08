@@ -27,7 +27,7 @@ const CargosComponent = () => {
                         <span className="text-white text-lg">Добавить новый товар</span>
                         <AddBtn className="bg-slate-700 hover:bg-slate-600" onClick={AddCargo} />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-2 h-[calc(100%_-_45px)] overflow-y-auto">
                         {!cargos || !cargos.length ? <div className="text-white text-center p-5 mt-6">Нет товаров</div> : cargos.map((cargo) => {
                             return <CargoItem key={cargo.id} {...cargo} />
                         })}

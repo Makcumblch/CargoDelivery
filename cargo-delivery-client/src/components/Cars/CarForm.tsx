@@ -40,7 +40,7 @@ const CarForm = ({ input, changeCar, close }: CarFormProps) => {
                 <label htmlFor="loadCapacity" className="block text-sm font-semibold text-slate-300">Грузоподъемность (кг)</label>
                 <input
                     value={inputCar.loadCapacity.toString()}
-                    type="text"
+                    type="number"
                     name="loadCapacity"
                     required
                     placeholder="Введите грузоподъемность"

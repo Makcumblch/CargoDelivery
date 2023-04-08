@@ -50,7 +50,7 @@ export const ModalWindow = ({ children }: ModalWindowProps) => {
             >
                 <div className="w-full p-4 m-auto z-[1002] bg-slate-700 rounded-md shadow-md md:max-w-md" onClick={e => e.stopPropagation()}>
                     <h1 className="text-2xl font-semibold text-center text-white truncate">{title}</h1>
-                    <div className='text-center text-slate-300 mt-2 truncate'>{content}</div>
+                    <div className='text-center text-slate-300 mt-2 overflow-visible'>{content}</div>
                     <div className='flex justify-around mt-2'>
                         <button
                             form='form'

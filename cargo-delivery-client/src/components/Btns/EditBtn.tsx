@@ -1,5 +1,5 @@
 interface EditBtnProps {
-    onClick: () => void
+    onClick: (e: any) => void
     className?: string
 }
 

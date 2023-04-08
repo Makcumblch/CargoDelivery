@@ -3,10 +3,9 @@ package cargodelivery
 import "errors"
 
 type Order struct {
-	Id        int    `json:"id" db:"id"`
-	IdCargo   int    `json:"idCargo" binding:"required" db:"cargo_id"`
-	CargoName string `json:"cargoName" db:"name"`
-	Count     uint   `json:"count" binding:"required" db:"count"`
+	Id      int  `json:"id" db:"id"`
+	IdCargo int  `json:"idCargo" binding:"required" db:"cargo_id"`
+	Count   uint `json:"count" binding:"required" db:"count"`
 }
 
 type UpdateOrder struct {

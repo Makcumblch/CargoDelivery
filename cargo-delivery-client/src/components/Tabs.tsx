@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import CargosComponent from "./Cargos/CargosComponent";
 import CarsComponent from "./Cars/CarsComponent";
+import ClientsComponent from "./Clients/ClientsComponent";
 
 const Tabs = () => {
     const [openTab, setOpenTab] = useState("Товары");
@@ -8,7 +9,7 @@ const Tabs = () => {
     const tabs = useMemo(() => {
         return [
             { name: "Товары", content: <CargosComponent /> },
-            { name: "Клиенты", content: "Клиенты" },
+            { name: "Клиенты", content: <ClientsComponent /> },
             { name: "Автомобили", content: <CarsComponent /> },
             { name: "Маршруты", content: "Маршруты" },
         ]
@@ -39,7 +40,7 @@ const Tabs = () => {
                     ))}
                 </ul>
             </div>
-            <div className="flex-auto h-full w-full bg-slate-500 p-2">
+            <div className="flex-auto h-[calc(100%_-_50px)] w-full bg-slate-500 p-2">
                 {content}
             </div>
         </div>

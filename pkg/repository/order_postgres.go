@@ -29,7 +29,7 @@ func (o *OrderPostgres) CreateOrder(clientId int, order cargodelivery.Order) (in
 func (o *OrderPostgres) GetAllOrders(clientId int) ([]cargodelivery.Order, error) {
 	var orders []cargodelivery.Order
 
-	query := fmt.Sprintf("SELECT ord.id, ord.cargo_id, ord.count, ca.name FROM %s ord INNER JOIN %s ca ON ord.cargo_id = ca.id WHERE ord.client_id = $1", ordersTable, cargosTable)
+	query := fmt.Sprintf("SELECT ord.id, ord.cargo_id, ord.count FROM %s ord  WHERE ord.client_id = $1", ordersTable)
 	err := o.db.Select(&orders, query, clientId)
 
 	return orders, err
@@ -38,7 +38,7 @@ func (o *OrderPostgres) GetAllOrders(clientId int) ([]cargodelivery.Order, error
 func (o *OrderPostgres) GetOrderById(clientId, orderId int) (cargodelivery.Order, error) {
 	var order cargodelivery.Order
 
-	query := fmt.Sprintf("SELECT ord.id, ord.cargo_id, ord.count, ca.name FROM %s ord INNER JOIN %s ca ON ord.cargo_id = ca.id WHERE ord.client_id = $1 AND ord.id = $2", ordersTable, cargosTable)
+	query := fmt.Sprintf("SELECT ord.id, ord.cargo_id, ord.count FROM %s ord WHERE ord.client_id = $1 AND ord.id = $2", ordersTable)
 	err := o.db.Get(&order, query, clientId, orderId)
 
 	return order, err
