@@ -50,7 +50,15 @@ type IOrder interface {
 	GetOrderById(clientId, orderId int) (cargodelivery.Order, error)
 	DeleteOrder(clientId, orderId int) error
 	UpdateOrder(clientId, orderId int, input cargodelivery.UpdateOrder) error
+	GetOrdersAndCargos(clientId int) ([]cargodelivery.OrderCargo, error)
 }
+
+type IRoute interface {
+	// CreateRoute(projectId int, routeSolution cargodelivery.RouteSolution) (int, error)
+	// GetTaskData(projectId int) (int, error)
+}
+
+type IOSM interface{}
 
 type Repository struct {
 	IAuthorization
@@ -59,6 +67,8 @@ type Repository struct {
 	ICargo
 	IClient
 	IOrder
+	IRoute
+	IOSM
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -69,5 +79,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 		ICargo:         NewCargoPostgres(db),
 		IClient:        NewClientPostgres(db),
 		IOrder:         NewOrderPostgres(db),
+		IRoute:         NewRoutePostgres(db),
+		IOSM:           NewOSMRepo(),
 	}
 }

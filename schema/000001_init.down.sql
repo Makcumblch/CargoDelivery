@@ -1,3 +1,5 @@
+DROP TABLE routes;
+
 DROP TABLE orders;
 
 DROP TABLE cargos;

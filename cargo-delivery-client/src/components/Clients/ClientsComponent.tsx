@@ -13,7 +13,7 @@ const ClientsComponent = () => {
     const AddClient = () => {
         open({
             title: `Новый клиент`,
-            content: <ClientForm input={{ id: -1, name: '', address: '' }} changeClient={addClient} close={close} />,
+            content: <ClientForm input={{id: -1, address: '', coordX: 0, coordY: 0, name: ''}} changeClient={addClient} close={close} />,
             onOk: () => () => { },
             onCancel: () => () => close()
         })

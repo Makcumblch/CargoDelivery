@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Client } from "../../contexts/ClientsContext";
+import SelectAddress from "../SelectAddress";
 
 interface ClientFormProps {
     input: Client,
@@ -37,15 +38,14 @@ const ClientForm = ({ input, changeClient, close }: ClientFormProps) => {
                 />
             </div>
             <div>
-                <label htmlFor="loadCapacity" className="block text-sm font-semibold text-slate-300">Адрес</label>
-                <input
-                    value={inputClient.address}
-                    type="text"
-                    name="address"
-                    required
-                    placeholder="Введите адрес"
-                    className="block w-full px-4 py-2 mt-2 text-white bg-slate-600  rounded-md focus:ring-slate-800 focus:outline-none focus:ring focus:ring-opacity-40"
-                    onChange={(e) => onChange('address', e.target.value)}
+                <label htmlFor="name" className="block text-sm font-semibold text-slate-300">Адрес</label>
+                <SelectAddress
+                    address={inputClient.address}
+                    onChange={(address, x, y) => {
+                        onChange('address', address)
+                        onChange('coordX', x)
+                        onChange('coordY', y)
+                    }}
                 />
             </div>
         </form>

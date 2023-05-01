@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import CargosComponent from "./Cargos/CargosComponent";
 import CarsComponent from "./Cars/CarsComponent";
 import ClientsComponent from "./Clients/ClientsComponent";
+import RoutesComponent from "./Routes/RoutesComponent";
 
 const Tabs = () => {
     const [openTab, setOpenTab] = useState("Товары");
@@ -11,7 +12,7 @@ const Tabs = () => {
             { name: "Товары", content: <CargosComponent /> },
             { name: "Клиенты", content: <ClientsComponent /> },
             { name: "Автомобили", content: <CarsComponent /> },
-            { name: "Маршруты", content: "Маршруты" },
+            { name: "Маршруты", content: <RoutesComponent /> },
         ]
     }, [])
 

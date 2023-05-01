@@ -8,6 +8,11 @@ type Order struct {
 	Count   uint `json:"count" binding:"required" db:"count"`
 }
 
+type OrderCargo struct {
+	Count uint `json:"count" binding:"required" db:"count"`
+	Cargo
+}
+
 type UpdateOrder struct {
 	IdCargo *int  `json:"idCargo"`
 	Count   *uint `json:"count"`

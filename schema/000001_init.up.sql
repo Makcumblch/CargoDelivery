@@ -41,6 +41,8 @@ CREATE TABLE clients
     project_id bigint not null,
     name varchar(255) not null,
     address varchar(255) not null,
+    coord_x real not null,
+	coord_y real not null,
     FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );
 
@@ -64,4 +66,13 @@ CREATE TABLE orders
     count int not null,
     FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE,
     FOREIGN KEY (cargo_id) REFERENCES cargos (id) ON DELETE CASCADE
+);
+
+CREATE TABLE routes
+(
+    id serial primary key,
+    project_id bigint not null,
+    dt timestamp with time zone,
+    solution json,
+    FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );

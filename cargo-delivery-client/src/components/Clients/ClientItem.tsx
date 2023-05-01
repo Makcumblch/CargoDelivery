@@ -7,7 +7,7 @@ import ClientForm from "./ClientForm";
 import { Orders } from "../../contexts/OrdersContext";
 import OrdersComponent from "../Orders/OrdersComponent";
 
-const ClientItem = ({ id, name, address }: Client) => {
+const ClientItem = ({ id, name, address, coordX, coordY }: Client) => {
     const { open, close } = useContext(ModalWindowContext)
     const { delClient, changeClient } = useContext(ClientsContext)
     const [isOpenOrders, setIsOpenOrders] = useState<boolean>(false)
@@ -29,7 +29,7 @@ const ClientItem = ({ id, name, address }: Client) => {
         e.stopPropagation()
         open({
             title: `Редактирование: ${name}`,
-            content: <ClientForm input={{ id, name, address }} changeClient={changeClient} close={close} />,
+            content: <ClientForm input={{ id, name, address, coordX, coordY }} changeClient={changeClient} close={close} />,
             onOk: () => () => { },
             onCancel: () => () => close()
         })

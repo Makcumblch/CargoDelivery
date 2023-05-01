@@ -53,6 +53,10 @@ type IOrder interface {
 	UpdateOrder(clientId, orderId int, input cargodelivery.UpdateOrder) error
 }
 
+type IRoute interface {
+	CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (cargodelivery.RouteSolution, error)
+}
+
 type Service struct {
 	IAuthorization
 	IProject
@@ -60,6 +64,7 @@ type Service struct {
 	ICargo
 	IClient
 	IOrder
+	IRoute
 }
 
 func NewService(repos *repository.Repository) *Service {
@@ -70,5 +75,6 @@ func NewService(repos *repository.Repository) *Service {
 		ICargo:         NewCargoService(repos.ICargo),
 		IClient:        NewClientService(repos.IClient),
 		IOrder:         NewOrderService(repos.IOrder, repos.ICargo),
+		IRoute:         NewRouteService(repos.ICar, repos.IClient, repos.IOrder, repos.IRoute, repos.IOSM),
 	}
 }
