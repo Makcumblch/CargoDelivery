@@ -11,7 +11,7 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 }
 
 func getSolutionCost(solution cargodelivery.RouteSolution) float32 {
-	return 0
+	return solution.RoutingCost + solution.PackingCost
 }
 
 func GetDeliverySolution(taskData cargodelivery.DeliveryTaskData, distanceMatrix [][]float32, settingsRoute cargodelivery.RouteSettings) (cargodelivery.RouteSolution, error) {

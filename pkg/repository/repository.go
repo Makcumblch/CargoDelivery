@@ -53,6 +53,12 @@ type IOrder interface {
 	GetOrdersAndCargos(clientId int) ([]cargodelivery.OrderCargo, error)
 }
 
+type IDepo interface {
+	CreateDepo(projectId int, depo cargodelivery.Depo) (int, error)
+	GetDepo(projectId int) (cargodelivery.Client, error)
+	UpdateDepo(projectId int, input cargodelivery.UpdateDepo) error
+}
+
 type IRoute interface {
 	// CreateRoute(projectId int, routeSolution cargodelivery.RouteSolution) (int, error)
 	// GetTaskData(projectId int) (int, error)
@@ -69,6 +75,7 @@ type Repository struct {
 	IOrder
 	IRoute
 	IOSM
+	IDepo
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -81,5 +88,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		IOrder:         NewOrderPostgres(db),
 		IRoute:         NewRoutePostgres(db),
 		IOSM:           NewOSMRepo(),
+		IDepo:          NewDepoPostgres(db),
 	}
 }

@@ -12,6 +12,24 @@ type DeliveryTaskData struct {
 	Clients []ClientOrders
 }
 
+type Route struct {
+	Clients   []Client    `json:"clients"`
+	Waypoints [][]float32 `json:"waypoints"`
+}
+
+type Item struct {
+	Cargo  Cargo  `json:"cargo"`
+	Client Client `json:"client"`
+}
+
+type CarRoute struct {
+	Car
+	Route []Route `json:"route"`
+	Items []Item  `json:"items"`
+}
+
 type RouteSolution struct {
-	Data [][]float32
+	CarsRouteSolution []CarRoute `json:"carsRouteSolution"`
+	RoutingCost       float32    `json:"routeCost"`
+	PackingCost       float32    `json:"packingCost"`
 }

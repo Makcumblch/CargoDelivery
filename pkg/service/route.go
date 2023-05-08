@@ -16,15 +16,16 @@ type RouteService struct {
 	carRepo    repository.ICar
 	clientRepo repository.IClient
 	orderRepo  repository.IOrder
+	depoRepo   repository.IDepo
 	repo       repository.IRoute
 	osm        repository.IOSM
 }
 
-func NewRouteService(carRepo repository.ICar, clientRepo repository.IClient, orderRepo repository.IOrder, repo repository.IRoute, osm repository.IOSM) *RouteService {
-	return &RouteService{carRepo: carRepo, clientRepo: clientRepo, orderRepo: orderRepo, repo: repo, osm: osm}
+func NewRouteService(carRepo repository.ICar, clientRepo repository.IClient, orderRepo repository.IOrder, repo repository.IRoute, depoRepo repository.IDepo, osm repository.IOSM) *RouteService {
+	return &RouteService{carRepo: carRepo, clientRepo: clientRepo, orderRepo: orderRepo, repo: repo, depoRepo: depoRepo, osm: osm}
 }
 
-func getTaskDeliveryData(projectId int, carRepo repository.ICar, clientRepo repository.IClient, orderRepo repository.IOrder) (cargodelivery.DeliveryTaskData, error) {
+func getTaskDeliveryData(projectId int, carRepo repository.ICar, clientRepo repository.IClient, orderRepo repository.IOrder, depoRepo repository.IDepo) (cargodelivery.DeliveryTaskData, error) {
 	var taskData cargodelivery.DeliveryTaskData
 
 	cars, err := carRepo.GetAllCars(projectId)
@@ -38,7 +39,13 @@ func getTaskDeliveryData(projectId int, carRepo repository.ICar, clientRepo repo
 		return taskData, err
 	}
 
+	depo, err := depoRepo.GetDepo(projectId)
+	if err != nil {
+		return taskData, err
+	}
+
 	var clientsOrders []cargodelivery.ClientOrders
+	clientsOrders = append(clientsOrders, cargodelivery.ClientOrders{Client: depo, Orders: make([]cargodelivery.OrderCargo, 0)})
 	for _, client := range clients {
 		orderCargos, err := orderRepo.GetOrdersAndCargos(client.Id)
 		if err != nil {
@@ -74,7 +81,7 @@ func getDistanceMatrix(taskData cargodelivery.DeliveryTaskData) ([][]float32, er
 
 func (r *RouteService) CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (cargodelivery.RouteSolution, error) {
 
-	taskData, err := getTaskDeliveryData(projectId, r.carRepo, r.clientRepo, r.orderRepo)
+	taskData, err := getTaskDeliveryData(projectId, r.carRepo, r.clientRepo, r.orderRepo, r.depoRepo)
 	if err != nil {
 		return cargodelivery.RouteSolution{}, err
 	}

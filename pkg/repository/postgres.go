@@ -14,6 +14,7 @@ const (
 	cargosTable      = "cargos"
 	ordersTable      = "orders"
 	clientsTable     = "clients"
+	depoTable        = "depo"
 )
 
 type Config struct {

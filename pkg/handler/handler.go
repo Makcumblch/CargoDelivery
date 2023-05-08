@@ -88,13 +88,23 @@ func (h *Handler) InitRoutes() *gin.Engine {
 					}
 				}
 
+				depo := project.Group("/depo")
+				{
+					depo.GET("/", h.getDepo)
+					depoWrite := depo.Group("/", h.accessWrite)
+					{
+						depoWrite.POST("/", h.createRoute)
+						depoWrite.PUT("/", h.updateDepo)
+					}
+				}
+
 				routes := project.Group("/routes")
 				{
 					routes.GET("/")
 					routes.GET("/:idRoute")
 					routesWrite := routes.Group("/", h.accessWrite)
 					{
-						routesWrite.POST("/", h.createRoute)
+						routesWrite.POST("/", h.createDepo)
 						routesWrite.DELETE("/:idRoute")
 					}
 				}

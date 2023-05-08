@@ -68,6 +68,16 @@ CREATE TABLE orders
     FOREIGN KEY (cargo_id) REFERENCES cargos (id) ON DELETE CASCADE
 );
 
+CREATE TABLE depo
+(
+    id serial primary key,
+    project_id bigint not null,
+    address varchar(255) not null,
+    coord_x real not null,
+	coord_y real not null,
+    FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
+);
+
 CREATE TABLE routes
 (
     id serial primary key,

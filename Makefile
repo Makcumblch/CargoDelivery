@@ -1,5 +1,5 @@
 postgres-run:
-	docker run --name=cargo-delivery-db -e POSTGRES_PASSWORD=$(password) -p 5432:5432 -d --rm postgres
+	docker run --name=cargo-delivery-db -e POSTGRES_PASSWORD=$(password) -p 5432:5432 -d postgres
 
 migrate-create:
 	migrate create -ext sql -dir ./schema -seq init
