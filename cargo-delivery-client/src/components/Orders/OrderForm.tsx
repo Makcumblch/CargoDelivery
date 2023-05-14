@@ -11,7 +11,7 @@ interface OrderFormProps {
 }
 
 const OrderForm = ({ input, changeOrder, close, cargos }: OrderFormProps) => {
-    const [inputOrder, setInputOrder] = useState<Order>({id: -1, idCargo: -1, count: 1})
+    const [inputOrder, setInputOrder] = useState<Order>(input)
 
 
     useEffect(() => {

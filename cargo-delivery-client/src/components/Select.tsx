@@ -32,6 +32,12 @@ const Select = ({ value, values, onChange }: SelectProps) => {
     }
 
     useEffect(() => {
+        if(value === -1) {
+            setInput('')
+        }
+    }, [value])
+
+    useEffect(() => {
         for (let v in values) {
             if (values[v].id === value) {
                 setInput(values[v].value)

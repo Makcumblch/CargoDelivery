@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { Client } from "../../contexts/ClientsContext";
 import SelectAddress from "../SelectAddress";
 
@@ -22,6 +22,10 @@ const ClientForm = ({ input, changeClient, close }: ClientFormProps) => {
         changeClient(inputClient.id, inputClient)
         close()
     }
+
+    useEffect(() => {
+        setInputClient(input)
+    }, [input])
 
     return (
         <form id='form' onSubmit={onSubmit} className="flex flex-col space-y-2 w-full mb-4">

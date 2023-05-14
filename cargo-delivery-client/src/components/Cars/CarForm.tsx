@@ -1,5 +1,5 @@
 import { Car } from "../../contexts/CarsContext";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 interface CarFormProps {
     input: Car,
@@ -16,12 +16,15 @@ const CarForm = ({ input, changeCar, close }: CarFormProps) => {
         })
     }
 
+    useEffect(() => {
+        setInputCar(input)
+    }, [input])
+
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         changeCar(inputCar.id, inputCar)
         close()
     }
-
     return (
         <form id='form' onSubmit={onSubmit} className="flex flex-col space-y-2 w-full mb-4">
             <div>

@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { Cargo } from "../../contexts/CargosContext";
 
 interface CargoFormProps {
@@ -22,6 +22,10 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
         close()
     }
 
+    useEffect(() => {
+        setInputCargo(input)
+    }, [input])
+
     return (
         <form id='form' onSubmit={onSubmit} className="flex flex-col space-y-2 w-full mb-4">
             <div>
@@ -42,6 +46,7 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
                     value={inputCargo.width.toString()}
                     type="number"
                     name="width"
+                    step={'any'}
                     required
                     min={0}
                     placeholder="Введите ширину"
@@ -55,6 +60,7 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
                     value={inputCargo.height.toString()}
                     type="number"
                     name="height"
+                    step={'any'}
                     required
                     min={0}
                     placeholder="Введите высоту"
@@ -68,6 +74,7 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
                     value={inputCargo.length.toString()}
                     type="number"
                     name="length"
+                    step={'any'}
                     required
                     min={0}
                     placeholder="Введите длину"
@@ -81,6 +88,7 @@ const CargoForm = ({ input, changeCargo, close }: CargoFormProps) => {
                     value={inputCargo.weight.toString()}
                     type="number"
                     name="weight"
+                    step={'any'}
                     required
                     min={0}
                     placeholder="Введите вес"

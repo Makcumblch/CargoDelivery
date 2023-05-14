@@ -93,7 +93,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 					depo.GET("/", h.getDepo)
 					depoWrite := depo.Group("/", h.accessWrite)
 					{
-						depoWrite.POST("/", h.createRoute)
+						depoWrite.POST("/", h.createDepo)
 						depoWrite.PUT("/", h.updateDepo)
 					}
 				}
@@ -104,7 +104,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 					routes.GET("/:idRoute")
 					routesWrite := routes.Group("/", h.accessWrite)
 					{
-						routesWrite.POST("/", h.createDepo)
+						routesWrite.POST("/", h.createRoute)
 						routesWrite.DELETE("/:idRoute")
 					}
 				}

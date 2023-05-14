@@ -12,9 +12,14 @@ type DeliveryTaskData struct {
 	Clients []ClientOrders
 }
 
+type ClientRoute struct {
+	Client
+	Index int
+}
+
 type Route struct {
-	Clients   []Client    `json:"clients"`
-	Waypoints [][]float32 `json:"waypoints"`
+	Clients   []ClientRoute `json:"clients"`
+	Waypoints [][]float32   `json:"waypoints"`
 }
 
 type Item struct {
@@ -24,8 +29,10 @@ type Item struct {
 
 type CarRoute struct {
 	Car
-	Route []Route `json:"route"`
-	Items []Item  `json:"items"`
+	Route            Route    `json:"route"`
+	Items            [][]Item `json:"items"`
+	FreeVolume       float32  `json:"freeVolume"`
+	FreeLoadCapacity float32  `json:"freeLoadCapacity"`
 }
 
 type RouteSolution struct {
