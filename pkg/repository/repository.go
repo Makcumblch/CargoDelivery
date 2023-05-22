@@ -64,7 +64,10 @@ type IRoute interface {
 	// GetTaskData(projectId int) (int, error)
 }
 
-type IOSM interface{}
+type IOSM interface {
+	GetDistanceMatrix(clients []cargodelivery.Client) ([][]float32, error)
+	GetRoutePoints(clients []cargodelivery.Client) [][]float32
+}
 
 type Repository struct {
 	IAuthorization

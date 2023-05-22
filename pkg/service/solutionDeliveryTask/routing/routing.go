@@ -1,12 +1,12 @@
 package routing
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
 
 	cargodelivery "github.com/Makcumblch/CargoDelivery"
+	"github.com/Makcumblch/CargoDelivery/pkg/service/solutionDeliveryTask/packing"
 	"github.com/Makcumblch/CargoDelivery/pkg/service/solutionDeliveryTask/utils"
 )
 
@@ -25,7 +25,7 @@ func getSolutionCost(distanceMatrix [][]float32, solution *cargodelivery.RouteSo
 		}
 	}
 	solution.RoutingCost = cost
-	return cost
+	return cost + solution.PackingCost
 }
 
 func getVolumeCargo(cargo cargodelivery.Cargo) float32 {
@@ -156,14 +156,14 @@ func customerTransfer(solution cargodelivery.RouteSolution) cargodelivery.RouteS
 	return solution
 }
 
-func getNewSolution(sol cargodelivery.RouteSolution, probability float32) (cargodelivery.RouteSolution, error) {
+func getNewSolution(sol cargodelivery.RouteSolution, probability float32) cargodelivery.RouteSolution {
 
 	newSolution := utils.CloneSolution(sol)
 
 	if probability >= rand.Float32() {
-		return customerExchange(newSolution), nil
+		return customerExchange(newSolution)
 	}
-	return customerTransfer(newSolution), nil
+	return customerTransfer(newSolution)
 }
 
 func getTransitionProbability(delta float32, temperature float32) float64 {
@@ -178,9 +178,12 @@ func getTemperatureCauchy(TMax float32, i int) float32 {
 	return TMax / float32(1+i)
 }
 
-func RoutingProcedure(TMax, TMin float32, distanceMatrix [][]float32, solution cargodelivery.RouteSolution) (cargodelivery.RouteSolution, error) {
+func RoutingProcedure(settingsRoute cargodelivery.RouteSettings, distanceMatrix [][]float32, solution cargodelivery.RouteSolution) cargodelivery.RouteSolution {
 
 	rand.Seed(time.Now().UnixNano())
+
+	var TMax = settingsRoute.TMax
+	var TMin = settingsRoute.TMin
 
 	var temperature = TMax
 	bestSolution := solution
@@ -188,22 +191,23 @@ func RoutingProcedure(TMax, TMin float32, distanceMatrix [][]float32, solution c
 
 	var i = 0
 	for temperature > TMin {
-		newSolution, err := getNewSolution(bestSolution, 0.5)
-		if err != nil {
-			return cargodelivery.RouteSolution{}, err
-		}
-		newSolutionCost := getSolutionCost(distanceMatrix, &newSolution)
+		newSolution := getNewSolution(bestSolution, 0.5)
 
-		p := getTransitionProbability(newSolutionCost-bestSolutionCost, temperature)
-		if p >= rand.Float64() {
-			bestSolution = newSolution
-			bestSolutionCost = newSolutionCost
+		newSolution, err := packing.PackingProcedure(settingsRoute.EvCount, newSolution)
+		if err == nil {
+
+			newSolutionCost := getSolutionCost(distanceMatrix, &newSolution)
+
+			p := getTransitionProbability(newSolutionCost-bestSolutionCost, temperature)
+			if p >= rand.Float64() {
+				bestSolution = newSolution
+				bestSolutionCost = newSolutionCost
+			}
 		}
+
 		temperature = getTemperatureCauchy(TMax, i)
 		i++
 	}
 
-	fmt.Println("bestSolutionCost", bestSolutionCost)
-
-	return bestSolution, nil
+	return bestSolution
 }

@@ -1,7 +1,6 @@
 package cargodelivery
 
 type RouteSettings struct {
-	Count   uint    `json:"count" binding:"required"`
 	EvCount uint    `json:"evCount" binding:"required"`
 	TMax    float32 `json:"tMax" binding:"required"`
 	TMin    float32 `json:"tMin" binding:"required"`
@@ -39,4 +38,8 @@ type RouteSolution struct {
 	CarsRouteSolution []CarRoute `json:"carsRouteSolution"`
 	RoutingCost       float32    `json:"routeCost"`
 	PackingCost       float32    `json:"packingCost"`
+}
+
+type OSMRTableResponse struct {
+	Distances [][]float32 `json:"distances"`
 }

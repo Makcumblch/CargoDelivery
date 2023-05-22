@@ -1,15 +1,9 @@
 package service
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"strings"
-
 	cargodelivery "github.com/Makcumblch/CargoDelivery"
 	"github.com/Makcumblch/CargoDelivery/pkg/repository"
 	solutiondeliverytask "github.com/Makcumblch/CargoDelivery/pkg/service/solutionDeliveryTask"
-	"github.com/spf13/viper"
 )
 
 type RouteService struct {
@@ -58,25 +52,22 @@ func getTaskDeliveryData(projectId int, carRepo repository.ICar, clientRepo repo
 	return taskData, nil
 }
 
-type OSMRTableResponse struct {
-	Distances [][]float32 `json:"distances"`
+func (r *RouteService) getDistanceMatrix(taskData cargodelivery.DeliveryTaskData) ([][]float32, error) {
+	clients := make([]cargodelivery.Client, 0)
+	for _, cl := range taskData.Clients {
+		clients = append(clients, cargodelivery.Client{Id: cl.Id, Address: cl.Address, CoordX: cl.CoordX, CoordY: cl.CoordY, Name: cl.Name})
+	}
+	return r.osm.GetDistanceMatrix(clients)
 }
 
-func getDistanceMatrix(taskData cargodelivery.DeliveryTaskData) ([][]float32, error) {
-	coords := make([]string, 0)
-	for _, client := range taskData.Clients {
-		coords = append(coords, fmt.Sprintf("%f,%f", client.CoordX, client.CoordY))
+func (r *RouteService) setRoutePoints(bestSolution *cargodelivery.RouteSolution) {
+	for _, car := range bestSolution.CarsRouteSolution {
+		clients := make([]cargodelivery.Client, 0)
+		for _, cl := range car.Route.Clients {
+			clients = append(clients, cargodelivery.Client{Id: cl.Id, Address: cl.Address, CoordX: cl.CoordX, CoordY: cl.CoordY, Name: cl.Name})
+		}
+		car.Route.Waypoints = r.osm.GetRoutePoints(clients)
 	}
-
-	resp, err := http.Get(fmt.Sprintf("http://%s:%s/table/v1/driving/%s?annotations=distance", viper.GetString("osmr.addres"), viper.GetString("osmr.port"), strings.Join(coords, ";")))
-	if err != nil {
-		return make([][]float32, 0), err
-	}
-
-	var result OSMRTableResponse
-	json.NewDecoder(resp.Body).Decode(&result)
-
-	return result.Distances, nil
 }
 
 func (r *RouteService) CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (cargodelivery.RouteSolution, error) {
@@ -86,7 +77,7 @@ func (r *RouteService) CreateRoute(projectId int, settingsRoute cargodelivery.Ro
 		return cargodelivery.RouteSolution{}, err
 	}
 
-	distanceMatrix, err := getDistanceMatrix(taskData)
+	distanceMatrix, err := r.getDistanceMatrix(taskData)
 	if err != nil {
 		return cargodelivery.RouteSolution{}, err
 	}
@@ -95,6 +86,8 @@ func (r *RouteService) CreateRoute(projectId int, settingsRoute cargodelivery.Ro
 	if err != nil {
 		return cargodelivery.RouteSolution{}, err
 	}
+
+	r.setRoutePoints(&deliverySolution)
 
 	return deliverySolution, nil
 }

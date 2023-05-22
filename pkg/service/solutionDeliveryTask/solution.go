@@ -114,10 +114,6 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 	return routeSolution, nil
 }
 
-func getSolutionCost(solution cargodelivery.RouteSolution) float32 {
-	return solution.RoutingCost + solution.PackingCost
-}
-
 func GetDeliverySolution(taskData cargodelivery.DeliveryTaskData, distanceMatrix [][]float32, settingsRoute cargodelivery.RouteSettings) (cargodelivery.RouteSolution, error) {
 
 	bestState, err := getInitSolution(taskData)
@@ -125,21 +121,7 @@ func GetDeliverySolution(taskData cargodelivery.DeliveryTaskData, distanceMatrix
 		return cargodelivery.RouteSolution{}, err
 	}
 
-	// bestStateCost := getSolutionCost(bestState)
-
-	for t := uint(0); t < settingsRoute.Count; t++ {
-		bestState, err = routing.RoutingProcedure(settingsRoute.TMax, settingsRoute.TMin, distanceMatrix, bestState)
-		if err != nil {
-			return cargodelivery.RouteSolution{}, err
-		}
-
-		// stateNew = packing.PackingProcedure(settingsRoute.EvCount, stateNew)
-		// stateNewCost := getSolutionCost(stateNew)
-		// if stateNewCost < bestStateCost {
-		// 	bestState = stateNew
-		// 	bestStateCost = stateNewCost
-		// }
-	}
+	bestState = routing.RoutingProcedure(settingsRoute, distanceMatrix, bestState)
 
 	return bestState, nil
 }
