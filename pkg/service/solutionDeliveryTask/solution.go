@@ -1,8 +1,6 @@
 package solutiondeliverytask
 
 import (
-	"errors"
-
 	cargodelivery "github.com/Makcumblch/CargoDelivery"
 	routing "github.com/Makcumblch/CargoDelivery/pkg/service/solutionDeliveryTask/routing"
 )
@@ -19,16 +17,16 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 	indexCar := 0
 	lenCars := len(taskData.Cars)
 	if lenCars == 0 {
-		return cargodelivery.RouteSolution{}, errors.New("нет транспортных средств")
+		return cargodelivery.RouteSolution{}, cargodelivery.ErrCreateRouteCars
 	}
 
 	idxClient := 0
 	lenClient := len(taskData.Clients)
-	if lenClient == 0 {
-		return cargodelivery.RouteSolution{}, errors.New("нет клиентов")
+	if lenClient == 1 {
+		return cargodelivery.RouteSolution{}, cargodelivery.ErrCreateRouteClient
 	}
 
-	routeSolution := cargodelivery.RouteSolution{RoutingCost: 0, PackingCost: 0}
+	routeSolution := cargodelivery.RouteSolution{Distance: 0, Fuel: 0, PackingCost: 0}
 
 	carsRouteSolution := make([]cargodelivery.CarRoute, lenCars)
 
@@ -36,8 +34,8 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 		carsRouteSolution[indexCar] = cargodelivery.CarRoute{
 			Car: taskData.Cars[indexCar],
 			Route: cargodelivery.Route{
-				Clients:   make([]cargodelivery.ClientRoute, 0),
-				Waypoints: make([][]float32, 0),
+				Clients:  make([]cargodelivery.ClientRoute, 0),
+				Polyline: make([][]float32, 0),
 			},
 			Items:            make([][]cargodelivery.Item, 0),
 			FreeVolume:       getVolumeCar(taskData.Cars[indexCar]),
@@ -82,7 +80,7 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 						carsRouteSolution[indexCar].FreeVolume = newVolume
 					} else {
 						if indexCar+1 == lenCars {
-							return cargodelivery.RouteSolution{}, errors.New("недостаточно ТС")
+							return cargodelivery.RouteSolution{}, cargodelivery.ErrCreateRouteFewCars
 						}
 						flagTS = true
 					}

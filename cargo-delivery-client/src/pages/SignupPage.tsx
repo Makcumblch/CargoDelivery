@@ -10,7 +10,7 @@ interface ISignpForm {
 }
 
 function SignupPage() {
-    const {login} = useContext(AuthContext)
+    const { login } = useContext(AuthContext)
     const { loading, error, request } = useHttp()
     const [form, setForm] = useState<ISignpForm>({
         username: "",
@@ -67,7 +67,7 @@ function SignupPage() {
                         />
                     </div>
                     {error && <p className="text-red-700 mb-0">
-                        {error}
+                        {error.message}
                     </p>}
                     <div className="mt-8">
                         <button

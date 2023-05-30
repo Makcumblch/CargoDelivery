@@ -1,5 +1,10 @@
 package cargodelivery
 
+import (
+	"errors"
+	"time"
+)
+
 type RouteSettings struct {
 	EvCount uint    `json:"evCount" binding:"required"`
 	TMax    float32 `json:"tMax" binding:"required"`
@@ -17,8 +22,8 @@ type ClientRoute struct {
 }
 
 type Route struct {
-	Clients   []ClientRoute `json:"clients"`
-	Waypoints [][]float32   `json:"waypoints"`
+	Clients  []ClientRoute `json:"clients"`
+	Polyline [][]float32   `json:"polyline"`
 }
 
 type Item struct {
@@ -36,10 +41,48 @@ type CarRoute struct {
 
 type RouteSolution struct {
 	CarsRouteSolution []CarRoute `json:"carsRouteSolution"`
-	RoutingCost       float32    `json:"routeCost"`
+	Distance          float32    `json:"distance"`
+	Fuel              float32    `json:"fuel"`
 	PackingCost       float32    `json:"packingCost"`
 }
 
 type OSMRTableResponse struct {
 	Distances [][]float32 `json:"distances"`
 }
+
+type Coords struct {
+	Coordinates [][]float32 `json:"coordinates"`
+}
+
+type Geometry struct {
+	Geometry Coords `json:"geometry"`
+}
+
+type OSMRRoteResponse struct {
+	Routes []Geometry `json:"routes"`
+}
+
+type CarRouteResponse struct {
+	Car
+	Polyline [][]float32 `json:"polyline"`
+}
+
+type RouteResponse struct {
+	Date       time.Time          `json:"date"`
+	Fuel       float32            `json:"fuel"`
+	Distance   float32            `json:"distance"`
+	Packing    float32            `json:"packing"`
+	CarsRoutes []CarRouteResponse `json:"cars_routes"`
+}
+
+type Routedb struct {
+	Id        int       `json:"id" db:"id"`
+	ProjectId int       `json:"project_id" db:"project_id"`
+	DT        time.Time `json:"dt" db:"dt"`
+	Solution  []byte    `json:"solution" db:"solution"`
+}
+
+var ErrCreateRouteFewCars = errors.New("недостаточно ТС")
+var ErrCreateRouteCars = errors.New("нет транспортных средств")
+var ErrCreateRouteClient = errors.New("нет клиентов")
+var ErrCreateRouteDepo = errors.New("не установлено депо")

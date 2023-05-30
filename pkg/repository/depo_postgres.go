@@ -59,7 +59,7 @@ func (c *DepoPostgres) UpdateDepo(projectId int, input cargodelivery.UpdateDepo)
 	}
 
 	setQuery := strings.Join(setValues, ", ")
-	query := fmt.Sprintf("UPDATE %s SET %s WHERE project_id = $%d", clientsTable, setQuery, argId)
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE project_id=$%d", depoTable, setQuery, argId)
 	args = append(args, projectId)
 
 	_, err := c.db.Exec(query, args...)

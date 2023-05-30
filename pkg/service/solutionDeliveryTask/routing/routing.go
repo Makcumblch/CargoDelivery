@@ -18,14 +18,19 @@ func getRandInt(max, min int) int {
 }
 
 func getSolutionCost(distanceMatrix [][]float32, solution *cargodelivery.RouteSolution) float32 {
-	var cost float32 = 0
+	var distance float32 = 0
+	var fuel float32 = 0
 	for _, car := range solution.CarsRouteSolution {
+		var dist float32 = 0
 		for r := 0; r < len(car.Route.Clients)-1; r++ {
-			cost += distanceMatrix[car.Route.Clients[r].Index][car.Route.Clients[r+1].Index] / 100000 * *car.FuelConsumption
+			dist += distanceMatrix[car.Route.Clients[r].Index][car.Route.Clients[r+1].Index] / 1000
 		}
+		distance += dist
+		fuel += dist / 100 * *car.FuelConsumption
 	}
-	solution.RoutingCost = cost
-	return cost + solution.PackingCost
+	solution.Distance = distance
+	solution.Fuel = fuel
+	return fuel + solution.PackingCost
 }
 
 func getVolumeCargo(cargo cargodelivery.Cargo) float32 {

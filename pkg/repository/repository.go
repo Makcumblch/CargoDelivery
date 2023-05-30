@@ -60,13 +60,14 @@ type IDepo interface {
 }
 
 type IRoute interface {
-	// CreateRoute(projectId int, routeSolution cargodelivery.RouteSolution) (int, error)
-	// GetTaskData(projectId int) (int, error)
+	CreateRoute(projectId int, routeSolution cargodelivery.RouteSolution) (int, error)
+	GetAllRoutes(projectId int) ([]cargodelivery.Routedb, error)
+	DeleteRoute(projectId, routeId int) error
 }
 
 type IOSM interface {
 	GetDistanceMatrix(clients []cargodelivery.Client) ([][]float32, error)
-	GetRoutePoints(clients []cargodelivery.Client) [][]float32
+	GetRoutePoints(clients []cargodelivery.Client) ([][]float32, error)
 }
 
 type Repository struct {

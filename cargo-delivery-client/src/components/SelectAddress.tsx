@@ -6,9 +6,10 @@ import { RawResult } from "leaflet-geosearch/dist/providers/openStreetMapProvide
 interface SelectAddressProps {
     address: string,
     onChange: (address: string, coordX: number, coordY: number) => void,
+    disabled?: boolean
 }
 
-const SelectAddress = ({ address, onChange }: SelectAddressProps) => {
+const SelectAddress = ({ address, onChange, disabled }: SelectAddressProps) => {
 
     const [input, setInput] = useState<string>(address)
     const [isFocused, setInFocused] = useState<boolean>(false)
@@ -30,9 +31,16 @@ const SelectAddress = ({ address, onChange }: SelectAddressProps) => {
     }
 
     useEffect(() => {
+        setInput(address)
+    }, [address])
+
+    useEffect(() => {
         for (let v in filteredValues) {
             if (filteredValues[v].label === input) {
-                onChange(filteredValues[v].label, filteredValues[v].x, filteredValues[v].y)
+                if (input !== address) {
+                    console.log('filteredValues[v]', filteredValues[v])
+                    onChange(filteredValues[v].label, filteredValues[v].x, filteredValues[v].y)
+                }
                 inputRef.current.setCustomValidity('')
                 return
             }
@@ -45,6 +53,7 @@ const SelectAddress = ({ address, onChange }: SelectAddressProps) => {
         <>
             <div className="relative w-full z-[1004]">
                 <input
+                    disabled={disabled}
                     ref={inputRef}
                     type="text"
                     value={input}
@@ -54,7 +63,7 @@ const SelectAddress = ({ address, onChange }: SelectAddressProps) => {
                     onFocus={() => setInFocused(true)}
                 />
                 <div
-                    className={`${!isFocused ? 'hidden' : ''} max-h-72 overflow-y-auto bg-slate-500 ring-2 ring-slate-800 ring-opacity-40 rounded-md shadow-md absolute left-0 right-0 `}
+                    className={`${!isFocused ? 'hidden' : ''} m-[-100%] max-h-72 overflow-y-auto bg-slate-500 ring-2 ring-slate-800 ring-opacity-40 rounded-md shadow-md absolute left-0 right-0 `}
                 >
                     {filteredValues.map(element => {
                         return (

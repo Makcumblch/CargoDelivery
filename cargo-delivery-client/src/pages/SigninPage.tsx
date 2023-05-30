@@ -66,7 +66,7 @@ function LoginPage() {
                         />
                     </div>
                     {error && <p className="text-red-700 mb-0">
-                        {error}
+                        {error.message}
                     </p>}
                     <div className="mt-8">
                         <button

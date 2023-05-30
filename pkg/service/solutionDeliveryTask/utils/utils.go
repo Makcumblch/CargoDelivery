@@ -3,12 +3,12 @@ package utils
 import cargodelivery "github.com/Makcumblch/CargoDelivery"
 
 func CloneSolution(solution cargodelivery.RouteSolution) cargodelivery.RouteSolution {
-	newSolution := cargodelivery.RouteSolution{RoutingCost: solution.RoutingCost, PackingCost: solution.PackingCost}
+	newSolution := cargodelivery.RouteSolution{Distance: solution.Distance, Fuel: solution.Fuel, PackingCost: solution.PackingCost}
 	newCarsRouteSolution := make([]cargodelivery.CarRoute, 0)
 	for _, route := range solution.CarsRouteSolution {
 		newCarRoute := cargodelivery.CarRoute{Car: route.Car, FreeVolume: route.FreeVolume, FreeLoadCapacity: route.FreeLoadCapacity}
 
-		newRoute := cargodelivery.Route{Clients: make([]cargodelivery.ClientRoute, 0), Waypoints: make([][]float32, 0)}
+		newRoute := cargodelivery.Route{Clients: make([]cargodelivery.ClientRoute, 0), Polyline: make([][]float32, 0)}
 		for _, client := range route.Route.Clients {
 			newClientRoute := cargodelivery.ClientRoute{Client: client.Client, Index: client.Index}
 			newRoute.Clients = append(newRoute.Clients, newClientRoute)
@@ -18,9 +18,7 @@ func CloneSolution(solution cargodelivery.RouteSolution) cargodelivery.RouteSolu
 		newItems := make([][]cargodelivery.Item, 0)
 		for _, clientItems := range route.Items {
 			newItemsClient := make([]cargodelivery.Item, 0)
-			for _, items := range clientItems {
-				newItemsClient = append(newItemsClient, items)
-			}
+			newItemsClient = append(newItemsClient, clientItems...)
 			newItems = append(newItems, newItemsClient)
 		}
 		newCarRoute.Items = newItems

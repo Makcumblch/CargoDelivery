@@ -1,6 +1,8 @@
 package service
 
 import (
+	"encoding/json"
+
 	cargodelivery "github.com/Makcumblch/CargoDelivery"
 	"github.com/Makcumblch/CargoDelivery/pkg/repository"
 	solutiondeliverytask "github.com/Makcumblch/CargoDelivery/pkg/service/solutionDeliveryTask"
@@ -35,7 +37,7 @@ func getTaskDeliveryData(projectId int, carRepo repository.ICar, clientRepo repo
 
 	depo, err := depoRepo.GetDepo(projectId)
 	if err != nil {
-		return taskData, err
+		return taskData, cargodelivery.ErrCreateRouteDepo
 	}
 
 	var clientsOrders []cargodelivery.ClientOrders
@@ -60,34 +62,81 @@ func (r *RouteService) getDistanceMatrix(taskData cargodelivery.DeliveryTaskData
 	return r.osm.GetDistanceMatrix(clients)
 }
 
-func (r *RouteService) setRoutePoints(bestSolution *cargodelivery.RouteSolution) {
-	for _, car := range bestSolution.CarsRouteSolution {
+func (r *RouteService) setRoutePoints(bestSolution cargodelivery.RouteSolution) (cargodelivery.RouteSolution, error) {
+	for i := 0; i < len(bestSolution.CarsRouteSolution); i++ {
 		clients := make([]cargodelivery.Client, 0)
-		for _, cl := range car.Route.Clients {
+		for _, cl := range bestSolution.CarsRouteSolution[i].Route.Clients {
 			clients = append(clients, cargodelivery.Client{Id: cl.Id, Address: cl.Address, CoordX: cl.CoordX, CoordY: cl.CoordY, Name: cl.Name})
 		}
-		car.Route.Waypoints = r.osm.GetRoutePoints(clients)
+		polyline, err := r.osm.GetRoutePoints(clients)
+		if err != nil {
+			return cargodelivery.RouteSolution{}, err
+		}
+		bestSolution.CarsRouteSolution[i].Route.Polyline = polyline
 	}
+	return bestSolution, nil
 }
 
-func (r *RouteService) CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (cargodelivery.RouteSolution, error) {
+func (r *RouteService) CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (int, error) {
 
 	taskData, err := getTaskDeliveryData(projectId, r.carRepo, r.clientRepo, r.orderRepo, r.depoRepo)
 	if err != nil {
-		return cargodelivery.RouteSolution{}, err
+		return -1, err
 	}
 
 	distanceMatrix, err := r.getDistanceMatrix(taskData)
 	if err != nil {
-		return cargodelivery.RouteSolution{}, err
+		return -1, err
 	}
 
 	deliverySolution, err := solutiondeliverytask.GetDeliverySolution(taskData, distanceMatrix, settingsRoute)
 	if err != nil {
-		return cargodelivery.RouteSolution{}, err
+		return -1, err
 	}
 
-	r.setRoutePoints(&deliverySolution)
+	deliverySolution, err = r.setRoutePoints(deliverySolution)
+	if err != nil {
+		return -1, err
+	}
 
-	return deliverySolution, nil
+	return r.repo.CreateRoute(projectId, deliverySolution)
+}
+
+func (r *RouteService) GetAllRoutes(projectId int) ([]cargodelivery.RouteResponse, error) {
+	routeResponse := make([]cargodelivery.RouteResponse, 0)
+	routes, err := r.repo.GetAllRoutes(projectId)
+	if err != nil {
+		return make([]cargodelivery.RouteResponse, 0), err
+	}
+	for _, route := range routes {
+		var response cargodelivery.RouteResponse
+
+		response.Date = route.DT
+
+		var solution cargodelivery.RouteSolution
+		err = json.Unmarshal(route.Solution, &solution)
+		if err != nil {
+			return make([]cargodelivery.RouteResponse, 0), err
+		}
+		response.Distance = solution.Distance
+		response.Fuel = solution.Fuel
+		response.Packing = solution.PackingCost
+		response.CarsRoutes = make([]cargodelivery.CarRouteResponse, 0)
+		for _, r := range solution.CarsRouteSolution {
+			carRoute := cargodelivery.CarRouteResponse{Car: r.Car, Polyline: r.Route.Polyline}
+			response.CarsRoutes = append(response.CarsRoutes, carRoute)
+		}
+
+		routeResponse = append(routeResponse, response)
+	}
+
+	return routeResponse, nil
+}
+
+// func (r *RouteService) GetRouteById(projectId, routeId int) (cargodelivery.RouteSolution, error) {
+
+// }
+
+func (r *RouteService) DeleteRoute(projectId, routeId int) error {
+	return r.repo.DeleteRoute(projectId, routeId)
 }

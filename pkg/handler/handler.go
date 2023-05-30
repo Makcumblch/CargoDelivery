@@ -100,12 +100,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 				routes := project.Group("/routes")
 				{
-					routes.GET("/")
+					routes.GET("/", h.getAllRoutes)
 					routes.GET("/:idRoute")
 					routesWrite := routes.Group("/", h.accessWrite)
 					{
 						routesWrite.POST("/", h.createRoute)
-						routesWrite.DELETE("/:idRoute")
+						routesWrite.DELETE("/:idRoute", h.deleteRoute)
 					}
 				}
 			}
