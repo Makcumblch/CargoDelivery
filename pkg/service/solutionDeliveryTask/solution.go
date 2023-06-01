@@ -71,8 +71,9 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 				idxCargo := 0
 				for idxCargo < int(order.Count) {
 					item := cargodelivery.Item{
-						Client: clientOrders.Client,
-						Cargo:  order.Cargo,
+						Client:   clientOrders.Client,
+						Cargo:    order.Cargo,
+						Position: cargodelivery.Position{X: 0, Y: 0, Z: 0},
 					}
 					newLoad := carsRouteSolution[indexCar].FreeLoadCapacity - *item.Cargo.Weight
 					newVolume := carsRouteSolution[indexCar].FreeVolume - getVolumeCargo(item.Cargo)

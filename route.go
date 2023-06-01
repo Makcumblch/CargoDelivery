@@ -21,9 +21,16 @@ type Route struct {
 	Waypoints [][]float32   `json:"waypoints"`
 }
 
+type Position struct{
+	X float32 `json:"x_pos"`
+	Y float32 `json:"y_pos"`
+	Z float32 `json:"z_pos"`
+}
+
 type Item struct {
-	Cargo  Cargo  `json:"cargo"`
-	Client Client `json:"client"`
+	Cargo  Cargo  	  `json:"cargo"`
+	Client Client 	  `json:"client"`
+	Position Position `json:"position"`
 }
 
 type CarRoute struct {
