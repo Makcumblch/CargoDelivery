@@ -5,16 +5,10 @@ import { LatLngExpression, Map } from 'leaflet';
 import { Client, ClientsContext } from '../../../contexts/ClientsContext';
 
 const MapComponent = () => {
-    const { depo, routes, selectRouteIndex } = useContext(RoutesContext)
-    const { clients } = useContext(ClientsContext)
+    const {routes, selectRouteIndex } = useContext(RoutesContext)
     const { } = useContext(RoutesContext)
 
     const map = useRef<Map | null>()
-
-    useEffect(() => {
-        if (depo.id === -1 || !map.current) return
-        map.current.setView([depo.coordY, depo.coordX], 5)
-    }, [depo])
 
     const printMarker = (client: Depo | Client, index: number) => {
         return (
@@ -32,27 +26,31 @@ const MapComponent = () => {
         return routes[selectRouteIndex]
     }, [routes, selectRouteIndex])
 
+    useEffect(() => {
+        if(!route || !map.current) return
+        const depo = route.clients[0]
+        if (!depo) return
+        map.current.setView([depo.coordY, depo.coordX], 5)
+    }, [route])
+
     return (
         <MapContainer
+            className='h-full w-full'
             center={[54.7431, 55.9678]}
             zoom={5}
             scrollWheelZoom={true}
-            style={{ height: '100%', width: '100%' }}
             ref={(r) => map.current = r}
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {depo.id !== -1 &&
-                printMarker(depo, 1)
-            }
-            {clients.map((el, index) => {
+            {route && route.clients.map((el, index)=> {
                 return printMarker(el, index)
             })}
             {route && route.cars_routes.map((el, index) => {
                 return (
-                    <Polyline key={index} color='red' positions={el.polyline}/>
+                    <Polyline key={index} color='red' positions={el.polyline} />
                 )
             })}
         </MapContainer>

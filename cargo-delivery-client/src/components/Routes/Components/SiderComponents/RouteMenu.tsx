@@ -22,7 +22,7 @@ const RouteMenu = () => {
     }
 
     return (
-        <div className="bg-slate-800 px-1 relative">
+        <div className="bg-slate-800 px-1 relative h-full">
             <div className="flex items-center">
                 <label htmlFor="name" className="w-20 block text-sm font-semibold text-slate-300 mr-1">Депо</label>
                 <SelectAddress

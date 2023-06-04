@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	cargodelivery "github.com/Makcumblch/CargoDelivery"
 	"github.com/jmoiron/sqlx"
 )
@@ -60,7 +62,7 @@ type IDepo interface {
 }
 
 type IRoute interface {
-	CreateRoute(projectId int, routeSolution cargodelivery.RouteSolution) (int, error)
+	CreateRoute(projectId int, solutionToDb cargodelivery.SolutionToDb, date time.Time) (int, error)
 	GetAllRoutes(projectId int) ([]cargodelivery.Routedb, error)
 	DeleteRoute(projectId, routeId int) error
 }

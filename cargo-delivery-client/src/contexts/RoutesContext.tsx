@@ -4,6 +4,7 @@ import { AuthContext } from './AuthContext'
 import { ProjectsContext } from './ProjectsContext'
 import { Car } from './CarsContext'
 import { LatLngExpression } from 'leaflet'
+import { Client } from './ClientsContext'
 
 export interface Depo {
     id: number,
@@ -13,7 +14,7 @@ export interface Depo {
     name: string,
 }
 
-export interface CarRoute extends Car {
+export interface CarsRoutes extends Car  {
     polyline: LatLngExpression[][]
 }
 
@@ -23,7 +24,8 @@ export interface ItemRoutesList {
     fuel: number
     distance: number
     packing: number
-    cars_routes: CarRoute[]
+    clients: Client[]
+    cars_routes: CarsRoutes[]
 }
 
 interface RoutesProps {
@@ -128,6 +130,7 @@ export const Routes = ({ children }: RoutesProps) => {
     }
 
     const deleteRoute = async (id: number) => {
+        console.log('---------------', id)
         try {
             const data = await request(`api/projects/${currentProjectId}/routes/${id}`, 'DELETE', null, {
                 Authorization: `Bearer ${token}`

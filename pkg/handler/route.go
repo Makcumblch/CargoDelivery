@@ -87,7 +87,7 @@ func (h *Handler) deleteRoute(c *gin.Context) {
 		return
 	}
 
-	routeId, err := strconv.Atoi(c.Param("id"))
+	routeId, err := strconv.Atoi(c.Param("idRoute"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid route id")
 		return

@@ -17,9 +17,9 @@ func NewRoutePostgres(db *sqlx.DB) *RoutePostgres {
 	return &RoutePostgres{db: db}
 }
 
-func (r *RoutePostgres) CreateRoute(projectId int, routeSolution cargodelivery.RouteSolution) (int, error) {
+func (r *RoutePostgres) CreateRoute(projectId int, solutionToDb cargodelivery.SolutionToDb, date time.Time) (int, error) {
 	var id int
-	strSolution, err := json.Marshal(routeSolution)
+	strSolution, err := json.Marshal(solutionToDb)
 	if err != nil {
 		return 0, err
 	}

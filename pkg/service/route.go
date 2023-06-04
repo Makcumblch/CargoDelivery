@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"time"
 
 	cargodelivery "github.com/Makcumblch/CargoDelivery"
 	"github.com/Makcumblch/CargoDelivery/pkg/repository"
@@ -39,6 +40,7 @@ func getTaskDeliveryData(projectId int, carRepo repository.ICar, clientRepo repo
 	if err != nil {
 		return taskData, cargodelivery.ErrCreateRouteDepo
 	}
+	depo.Name = "Депо"
 
 	var clientsOrders []cargodelivery.ClientOrders
 	clientsOrders = append(clientsOrders, cargodelivery.ClientOrders{Client: depo, Orders: make([]cargodelivery.OrderCargo, 0)})
@@ -77,29 +79,49 @@ func (r *RouteService) setRoutePoints(bestSolution cargodelivery.RouteSolution) 
 	return bestSolution, nil
 }
 
-func (r *RouteService) CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (int, error) {
+func (r *RouteService) CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (cargodelivery.RouteResponse, error) {
 
 	taskData, err := getTaskDeliveryData(projectId, r.carRepo, r.clientRepo, r.orderRepo, r.depoRepo)
 	if err != nil {
-		return -1, err
+		return cargodelivery.RouteResponse{}, err
 	}
 
 	distanceMatrix, err := r.getDistanceMatrix(taskData)
 	if err != nil {
-		return -1, err
+		return cargodelivery.RouteResponse{}, err
 	}
 
 	deliverySolution, err := solutiondeliverytask.GetDeliverySolution(taskData, distanceMatrix, settingsRoute)
 	if err != nil {
-		return -1, err
+		return cargodelivery.RouteResponse{}, err
 	}
 
 	deliverySolution, err = r.setRoutePoints(deliverySolution)
 	if err != nil {
-		return -1, err
+		return cargodelivery.RouteResponse{}, err
 	}
 
-	return r.repo.CreateRoute(projectId, deliverySolution)
+	var clients = make([]cargodelivery.Client, 0)
+	for _, client := range taskData.Clients {
+		clients = append(clients, client.Client)
+	}
+
+	date := time.Now()
+
+	solutionToDb := cargodelivery.SolutionToDb{Solution: deliverySolution, Depo: taskData.Clients[0].Client, Clients: clients}
+
+	id, err := r.repo.CreateRoute(projectId, solutionToDb, date)
+	if err != nil {
+		return cargodelivery.RouteResponse{}, err
+	}
+
+	carsRoutes := make([]cargodelivery.CarRouteResponse, 0)
+	for _, r := range deliverySolution.CarsRouteSolution {
+		carRoute := cargodelivery.CarRouteResponse{Car: r.Car, Polyline: r.Route.Polyline}
+		carsRoutes = append(carsRoutes, carRoute)
+	}
+
+	return cargodelivery.RouteResponse{Id: id, Date: date, Distance: deliverySolution.Distance, Fuel: deliverySolution.Fuel, Packing: deliverySolution.PackingCost, Clients: solutionToDb.Clients, CarsRoutes: carsRoutes}, nil
 }
 
 func (r *RouteService) GetAllRoutes(projectId int) ([]cargodelivery.RouteResponse, error) {
@@ -111,18 +133,23 @@ func (r *RouteService) GetAllRoutes(projectId int) ([]cargodelivery.RouteRespons
 	for _, route := range routes {
 		var response cargodelivery.RouteResponse
 
+		response.Id = route.Id
 		response.Date = route.DT
 
-		var solution cargodelivery.RouteSolution
+		var solution cargodelivery.SolutionToDb
 		err = json.Unmarshal(route.Solution, &solution)
 		if err != nil {
 			return make([]cargodelivery.RouteResponse, 0), err
 		}
-		response.Distance = solution.Distance
-		response.Fuel = solution.Fuel
-		response.Packing = solution.PackingCost
+		response.Clients = solution.Clients
+		if len(response.Clients) > 0 {
+			response.Clients[0].Name = "Депо"
+		}
+		response.Distance = solution.Solution.Distance
+		response.Fuel = solution.Solution.Fuel
+		response.Packing = solution.Solution.PackingCost
 		response.CarsRoutes = make([]cargodelivery.CarRouteResponse, 0)
-		for _, r := range solution.CarsRouteSolution {
+		for _, r := range solution.Solution.CarsRouteSolution {
 			carRoute := cargodelivery.CarRouteResponse{Car: r.Car, Polyline: r.Route.Polyline}
 			response.CarsRoutes = append(response.CarsRoutes, carRoute)
 		}
