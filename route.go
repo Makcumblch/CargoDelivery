@@ -68,10 +68,12 @@ type CarRouteResponse struct {
 }
 
 type RouteResponse struct {
+	Id         int                `json:"id"`
 	Date       time.Time          `json:"date"`
 	Fuel       float32            `json:"fuel"`
 	Distance   float32            `json:"distance"`
 	Packing    float32            `json:"packing"`
+	Clients    []Client           `json:"clients"`
 	CarsRoutes []CarRouteResponse `json:"cars_routes"`
 }
 
@@ -80,6 +82,12 @@ type Routedb struct {
 	ProjectId int       `json:"project_id" db:"project_id"`
 	DT        time.Time `json:"dt" db:"dt"`
 	Solution  []byte    `json:"solution" db:"solution"`
+}
+
+type SolutionToDb struct {
+	Solution RouteSolution `json:"solution"`
+	Depo     Client        `json:"depo"`
+	Clients  []Client      `json:"clients"`
 }
 
 var ErrCreateRouteFewCars = errors.New("недостаточно ТС")

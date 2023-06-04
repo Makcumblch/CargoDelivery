@@ -60,7 +60,7 @@ type IDepo interface {
 }
 
 type IRoute interface {
-	CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (int, error)
+	CreateRoute(projectId int, settingsRoute cargodelivery.RouteSettings) (cargodelivery.RouteResponse, error)
 	GetAllRoutes(projectId int) ([]cargodelivery.RouteResponse, error)
 	// GetRouteById(projectId, routeId int) (cargodelivery.RouteSolution, error)
 	DeleteRoute(projectId, routeId int) error
