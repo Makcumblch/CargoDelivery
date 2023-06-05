@@ -284,6 +284,9 @@ func Decoder(solution cargodelivery.RouteSolution) (cargodelivery.RouteSolution,
 
 	solution.PackingCost = GetPackingCost(solution)
 
+	return solution, nil
+}
+
 func EvMutation(Items [][]cargodelivery.Item) [][]cargodelivery.Item {
 	clientInd := utils.GetRandInt(len(Items)-1, 0)
 
