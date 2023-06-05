@@ -10,13 +10,6 @@ import (
 	"github.com/Makcumblch/CargoDelivery/pkg/service/solutionDeliveryTask/utils"
 )
 
-func getRandInt(max, min int) int {
-	if max-min == 0 {
-		return min
-	}
-	return rand.Intn(max-min) + min
-}
-
 func getSolutionCost(distanceMatrix [][]float32, solution *cargodelivery.RouteSolution) float32 {
 	var distance float32 = 0
 	var fuel float32 = 0
@@ -99,10 +92,10 @@ func customerExchange(solution cargodelivery.RouteSolution) cargodelivery.RouteS
 	}
 
 	lenClients1 := len(car1.Route.Clients)
-	indexClient1 := getRandInt(lenClients1-1, 1)
+	indexClient1 := utils.GetRandInt(lenClients1-1, 1)
 
 	lenClients2 := len(car2.Route.Clients)
-	indexClient2 := getRandInt(lenClients2-1, 1)
+	indexClient2 := utils.GetRandInt(lenClients2-1, 1)
 
 	if car1.Route.Clients[indexClient1].Index == car2.Route.Clients[indexClient2].Index {
 		return solution
@@ -145,13 +138,13 @@ func customerTransfer(solution cargodelivery.RouteSolution) cargodelivery.RouteS
 	car2 := &solution.CarsRouteSolution[car2Index]
 
 	lenClients1 := len(car1.Route.Clients)
-	indexClient1 := getRandInt(lenClients1-1, 1)
+	indexClient1 := utils.GetRandInt(lenClients1-1, 1)
 
 	flagExistence := false
 	indexClient2 := getIndexClient(car2.Route.Clients, car1.Route.Clients[indexClient1].Index)
 	if indexClient2 == -1 {
 		lenClients2 := len(car2.Route.Clients)
-		indexClient2 = getRandInt(lenClients2-1, 1)
+		indexClient2 = utils.GetRandInt(lenClients2-1, 1)
 	} else {
 		flagExistence = true
 	}

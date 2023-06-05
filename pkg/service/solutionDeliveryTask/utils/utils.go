@@ -1,6 +1,17 @@
 package utils
 
-import cargodelivery "github.com/Makcumblch/CargoDelivery"
+import (
+	"math/rand"
+
+	cargodelivery "github.com/Makcumblch/CargoDelivery"
+)
+
+func GetRandInt(max, min int) int {
+	if max-min == 0 {
+		return min
+	}
+	return rand.Intn(max-min) + min
+}
 
 func CloneSolution(solution cargodelivery.RouteSolution) cargodelivery.RouteSolution {
 	newSolution := cargodelivery.RouteSolution{Distance: solution.Distance, Fuel: solution.Fuel, PackingCost: solution.PackingCost}
