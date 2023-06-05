@@ -6,9 +6,10 @@ import (
 )
 
 type RouteSettings struct {
-	EvCount uint    `json:"evCount" binding:"required"`
-	TMax    float32 `json:"tMax" binding:"required"`
-	TMin    float32 `json:"tMin" binding:"required"`
+	EvCount     uint    `json:"evCount" binding:"required"`
+	TMax        float32 `json:"tMax" binding:"required"`
+	TMin        float32 `json:"tMin" binding:"required"`
+	PackingType *bool   `json:"packingType" binding:"required"`
 }
 
 type DeliveryTaskData struct {

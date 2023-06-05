@@ -9,6 +9,7 @@ const RouteMenu = () => {
     const [count, setCount] = useState<number>(100)
     const [TMax, setTMax] = useState<number>(1000)
     const [TMin, setTmin] = useState<number>(1)
+    const [packingtype, setPackingType] = useState<boolean>(false)
 
     useEffect(() => {
         setCount(Number(localStorage.getItem('count') ?? 100))
@@ -59,7 +60,7 @@ const RouteMenu = () => {
                     />
                 </div>
             </div>
-            <div className="flex items-center">
+            <div className="grid  grid-cols-[70px_1fr_150px] items-center">
                 <label htmlFor="name" className="w-20 block text-sm font-semibold text-slate-300 mr-1">Эволюц.</label>
                 <input
                     disabled={isLoadingCreate}
@@ -69,11 +70,21 @@ const RouteMenu = () => {
                     onChange={(e) => onChange('count', e.target.value, setCount)}
                     className="block w-full px-4 py-2 mt-2 text-white bg-slate-600  rounded-md focus:ring-slate-800 focus:outline-none focus:ring focus:ring-opacity-40"
                 />
+                <div className="flex items-center ml-2 text-white">
+                    <div className="flex items-center">
+                        <label className="mr-1">Посл.</label>
+                        <input type="radio" checked={!packingtype} onChange={() => setPackingType(false)}/>
+                    </div>
+                    <div className="flex ml-2 items-center">
+                        <label className="mr-1">Колон.</label>
+                        <input type="radio" checked={packingtype} onChange={() => setPackingType(true)}/>
+                    </div>
+                </div>
             </div>
             <button
                 className="mt-2 w-full px-4 py-1.5 tracking-wide text-white transition-colors duration-200 transform bg-cyan-700 rounded-md hover:bg-cyan-600 focus:outline-none focus:bg-cyan-600"
                 onClick={() => {
-                    createRoute(count, TMax, TMin)
+                    createRoute(count, TMax, TMin, packingtype)
                 }}
                 disabled={isLoadingCreate}
             >
