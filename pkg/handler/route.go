@@ -35,7 +35,7 @@ func (h *Handler) createRoute(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": routeId,
+		"data": routeId,
 	})
 }
 
@@ -60,26 +60,26 @@ func (h *Handler) getAllRoutes(c *gin.Context) {
 	})
 }
 
-// func (h *Handler) getRouteById(c *gin.Context) {
-// 	projectId, err := getProjectId(c)
-// 	if err != nil {
-// 		return
-// 	}
+func (h *Handler) getRouteById(c *gin.Context) {
+	projectId, err := getProjectId(c)
+	if err != nil {
+		return
+	}
 
-// 	carId, err := strconv.Atoi(c.Param("id"))
-// 	if err != nil {
-// 		newErrorResponse(c, http.StatusBadRequest, "invalid route id")
-// 		return
-// 	}
+	routeId, err := strconv.Atoi(c.Param("idRoute"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid route idRoute")
+		return
+	}
 
-// 	car, err := h.services.IRoute.GetRouteById(projectId, carId)
-// 	if err != nil {
-// 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
+	route, err := h.services.IRoute.GetRouteById(projectId, routeId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-// 	c.JSON(http.StatusOK, car)
-// }
+	c.JSON(http.StatusOK, route)
+}
 
 func (h *Handler) deleteRoute(c *gin.Context) {
 	projectId, err := getProjectId(c)

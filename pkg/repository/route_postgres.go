@@ -46,3 +46,12 @@ func (r *RoutePostgres) DeleteRoute(projectId, routeId int) error {
 
 	return err
 }
+
+func (r *RoutePostgres) GetRouteById(projectId, routeId int) (cargodelivery.Routedb, error) {
+	var route cargodelivery.Routedb
+
+	query := fmt.Sprintf("SELECT * FROM %s WHERE project_id = $1 AND id = $2", routeTable)
+	err := r.db.Get(&route, query, projectId, routeId)
+
+	return route, err
+}

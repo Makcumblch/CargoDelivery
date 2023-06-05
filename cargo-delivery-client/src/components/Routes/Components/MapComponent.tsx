@@ -1,12 +1,26 @@
 import { useContext, useEffect, useMemo, useRef } from 'react';
-import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet'
+import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet'
 import { Depo, RoutesContext } from '../../../contexts/RoutesContext';
 import { LatLngExpression, Map } from 'leaflet';
-import { Client, ClientsContext } from '../../../contexts/ClientsContext';
+import { Client } from '../../../contexts/ClientsContext';
+import { RouteContext } from '../../../contexts/RouteContext';
+
+const stringToHex = (str: string) => {
+    var result = '';
+    for (var i = 0; i < str.length; i++) {
+        result += str.charCodeAt(i).toString(16);
+    }
+    return result;
+}
+
+const getColorByName = (name: string) => {
+    const hexStr = stringToHex(`${name}name`)
+    return `#${hexStr.slice(0, 2)}${hexStr.slice(2, 4)}${hexStr.slice(4, 6)}`
+}
 
 const MapComponent = () => {
-    const {routes, selectRouteIndex } = useContext(RoutesContext)
-    const { } = useContext(RoutesContext)
+    const { routes, selectRouteIndex, inDetail } = useContext(RoutesContext)
+    const { routeSolution } = useContext(RouteContext)
 
     const map = useRef<Map | null>()
 
@@ -27,7 +41,7 @@ const MapComponent = () => {
     }, [routes, selectRouteIndex])
 
     useEffect(() => {
-        if(!route || !map.current) return
+        if (!route || !map.current) return
         const depo = route.clients[0]
         if (!depo) return
         map.current.setView([depo.coordY, depo.coordX], 5)
@@ -45,14 +59,27 @@ const MapComponent = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {route && route.clients.map((el, index)=> {
+            {route && route.clients.map((el, index) => {
                 return printMarker(el, index)
             })}
-            {route && route.cars_routes.map((el, index) => {
-                return (
-                    <Polyline key={index} color='red' positions={el.polyline} />
-                )
-            })}
+            {inDetail
+                ?
+                <>
+                    {routeSolution && routeSolution.carsRouteSolution.map((el, index) => {
+                        if (!el.isVisible) return null
+                        return <Polyline key={index} color={getColorByName(el.name)} positions={el.route.polyline as LatLngExpression[] | LatLngExpression[][]} />
+                    })}
+                </>
+                :
+                <>
+                    {route && route.cars_routes.map((el, index) => {
+                        return (
+                            <Polyline key={index} color={getColorByName(el.name)} positions={el.polyline} />
+                        )
+                    }
+                    )}
+                </>
+            }
         </MapContainer>
     );
 }

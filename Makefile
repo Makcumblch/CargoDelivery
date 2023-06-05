@@ -14,7 +14,7 @@ run:
 	go run cmd/main.go
 
 osmr-create:
-	docker run -t -v "${PWD}:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /data/russia-latest.osm.pbf
+	docker run -t -v "${PWD}:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /data/volga-fed-district-latest.osm.pbf
 	docker run -t -v "${PWD}:/data" osrm/osrm-backend osrm-partition /data/volga-fed-district-latest.osrm
 	docker run -t -v "${PWD}:/data" osrm/osrm-backend osrm-customize /data/volga-fed-district-latest.osrm
 

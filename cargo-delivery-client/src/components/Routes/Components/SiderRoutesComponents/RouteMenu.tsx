@@ -73,7 +73,6 @@ const RouteMenu = () => {
             <button
                 className="mt-2 w-full px-4 py-1.5 tracking-wide text-white transition-colors duration-200 transform bg-cyan-700 rounded-md hover:bg-cyan-600 focus:outline-none focus:bg-cyan-600"
                 onClick={() => {
-                    console.log('=')
                     createRoute(count, TMax, TMin)
                 }}
                 disabled={isLoadingCreate}

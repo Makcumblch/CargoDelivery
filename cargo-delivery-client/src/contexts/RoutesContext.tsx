@@ -16,6 +16,7 @@ export interface Depo {
 
 export interface CarsRoutes extends Car  {
     polyline: LatLngExpression[][]
+    checked: boolean
 }
 
 export interface ItemRoutesList {
@@ -43,6 +44,10 @@ interface IRoutesContext {
     selectRouteIndex: number,
     setSelectRouteIndex: (index: number) => void,
     error: ReqError | null,
+    isPacking: boolean,
+    setIsPacking: (value: boolean) => void,
+    inDetail: boolean,
+    setInDetail: (value: boolean) => void,
 }
 
 export const RoutesContext = createContext<IRoutesContext>({
@@ -56,6 +61,10 @@ export const RoutesContext = createContext<IRoutesContext>({
     selectRouteIndex: -1,
     setSelectRouteIndex: () => {},
     error: null,
+    inDetail: false,
+    isPacking: false,
+    setIsPacking: () => {},
+    setInDetail: () => {},
 })
 
 export const Routes = ({ children }: RoutesProps) => {
@@ -69,6 +78,10 @@ export const Routes = ({ children }: RoutesProps) => {
     const [depo, setDepo] = useState<Depo>({ id: -1, address: '', coordX: -1, coordY: -1, name: 'Депо' })
     const [routes, setRoutes] = useState<ItemRoutesList[]>([])
     const [selectRouteIndex, setSelectRouteIndex] = useState<number>(-1)
+
+    const [inDetail, setInDetail] = useState<boolean>(false)
+    
+    const [isPacking, setIsPacking] = useState<boolean>(false)
 
     useEffect(() => {
         const getDepo = async () => {
@@ -90,6 +103,9 @@ export const Routes = ({ children }: RoutesProps) => {
                 routesData = routesData.data as ItemRoutesList[]
                 if (!routesData) return
                 setRoutes(routesData)
+                if(routesData.length){
+                    setSelectRouteIndex(0)
+                }
             } catch (e) { }
         }
 
@@ -124,13 +140,15 @@ export const Routes = ({ children }: RoutesProps) => {
             }, {
                 Authorization: `Bearer ${token}`
             })
-
+            const newRoutes = [...routes]
+            newRoutes.unshift(newRoute.data)
+            setRoutes(newRoutes)
+            setSelectRouteIndex(prev => prev + 1)
         } catch (e) { }
         setIsLoadingCreate(false)
     }
 
     const deleteRoute = async (id: number) => {
-        console.log('---------------', id)
         try {
             const data = await request(`api/projects/${currentProjectId}/routes/${id}`, 'DELETE', null, {
                 Authorization: `Bearer ${token}`
@@ -141,12 +159,14 @@ export const Routes = ({ children }: RoutesProps) => {
                 for (let i = 0; i < prev.length; ++i) {
                     if (prev[i].id !== id) {
                         newRoutes.push({ ...prev[i] })
-                    }
-                    if(newRoutes.length === 0){
-                        setSelectRouteIndex(-1)
                     }else{
-                        setSelectRouteIndex(prev => prev - 1)
+                        if(i <= selectRouteIndex){
+                            setSelectRouteIndex(selectRouteIndex - 1)
+                        }
                     }
+                }
+                if(newRoutes.length === 0){
+                    setSelectRouteIndex(-1)
                 }
                 return newRoutes
             })
@@ -165,6 +185,10 @@ export const Routes = ({ children }: RoutesProps) => {
             selectRouteIndex,
             setSelectRouteIndex,
             error,
+            inDetail,
+            setInDetail,
+            isPacking,
+            setIsPacking,
         }}>
             {children}
         </RoutesContext.Provider>

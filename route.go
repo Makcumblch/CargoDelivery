@@ -18,7 +18,7 @@ type DeliveryTaskData struct {
 
 type ClientRoute struct {
 	Client
-	Index int
+	Index int `json:"index"`
 }
 
 type Route struct {
@@ -26,15 +26,15 @@ type Route struct {
 	Polyline [][]float32   `json:"polyline"`
 }
 
-type Position struct{
+type Position struct {
 	X float32 `json:"x_pos"`
 	Y float32 `json:"y_pos"`
 	Z float32 `json:"z_pos"`
 }
 
 type Item struct {
-	Cargo  Cargo  	  `json:"cargo"`
-	Client Client 	  `json:"client"`
+	Cargo    Cargo    `json:"cargo"`
+	Client   Client   `json:"client"`
 	Position Position `json:"position"`
 }
 
