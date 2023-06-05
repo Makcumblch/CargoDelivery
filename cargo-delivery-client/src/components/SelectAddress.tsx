@@ -7,9 +7,10 @@ interface SelectAddressProps {
     address: string,
     onChange: (address: string, coordX: number, coordY: number) => void,
     disabled?: boolean
+    isTop?: boolean
 }
 
-const SelectAddress = ({ address, onChange, disabled }: SelectAddressProps) => {
+const SelectAddress = ({ address, onChange, disabled, isTop }: SelectAddressProps) => {
 
     const [input, setInput] = useState<string>(address)
     const [isFocused, setInFocused] = useState<boolean>(false)
@@ -63,7 +64,7 @@ const SelectAddress = ({ address, onChange, disabled }: SelectAddressProps) => {
                     onFocus={() => setInFocused(true)}
                 />
                 <div
-                    className={`${!isFocused ? 'hidden' : ''} m-[-100%] max-h-72 overflow-y-auto bg-slate-500 ring-2 ring-slate-800 ring-opacity-40 rounded-md shadow-md absolute left-0 right-0 `}
+                    className={`${!isFocused ? 'hidden' : ''} ${isTop ? 'm-[-100%]' : ''} max-h-72 overflow-y-auto bg-slate-500 ring-2 ring-slate-800 ring-opacity-40 rounded-md shadow-md absolute left-0 right-0 `}
                 >
                     {filteredValues.map(element => {
                         return (

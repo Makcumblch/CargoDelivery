@@ -160,9 +160,20 @@ func (r *RouteService) GetAllRoutes(projectId int) ([]cargodelivery.RouteRespons
 	return routeResponse, nil
 }
 
-// func (r *RouteService) GetRouteById(projectId, routeId int) (cargodelivery.RouteSolution, error) {
+func (r *RouteService) GetRouteById(projectId, routeId int) (cargodelivery.RouteSolution, error) {
+	route, err := r.repo.GetRouteById(projectId, routeId)
+	if err != nil {
+		return cargodelivery.RouteSolution{}, err
+	}
 
-// }
+	var solution cargodelivery.SolutionToDb
+	err = json.Unmarshal(route.Solution, &solution)
+	if err != nil {
+		return cargodelivery.RouteSolution{}, err
+	}
+
+	return solution.Solution, nil
+}
 
 func (r *RouteService) DeleteRoute(projectId, routeId int) error {
 	return r.repo.DeleteRoute(projectId, routeId)

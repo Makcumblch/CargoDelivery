@@ -64,6 +64,7 @@ type IDepo interface {
 type IRoute interface {
 	CreateRoute(projectId int, solutionToDb cargodelivery.SolutionToDb, date time.Time) (int, error)
 	GetAllRoutes(projectId int) ([]cargodelivery.Routedb, error)
+	GetRouteById(projectId, routeId int) (cargodelivery.Routedb, error)
 	DeleteRoute(projectId, routeId int) error
 }
 
