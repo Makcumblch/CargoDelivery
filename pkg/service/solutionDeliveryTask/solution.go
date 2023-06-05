@@ -1,6 +1,8 @@
 package solutiondeliverytask
 
 import (
+	"math"
+
 	cargodelivery "github.com/Makcumblch/CargoDelivery"
 	routing "github.com/Makcumblch/CargoDelivery/pkg/service/solutionDeliveryTask/routing"
 )
@@ -109,6 +111,8 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 	}
 
 	routeSolution.CarsRouteSolution = carsRouteSolution
+
+	routeSolution.PackingCost = math.MaxFloat32
 
 	return routeSolution, nil
 }
