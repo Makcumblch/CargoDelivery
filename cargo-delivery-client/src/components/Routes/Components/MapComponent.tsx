@@ -13,12 +13,12 @@ const stringToHex = (str: string) => {
     return result;
 }
 
-const getColorByName = (name: string) => {
+export const getColorByName = (name: string) => {
     const hexStr = stringToHex(`${name}name`)
     return `#${hexStr.slice(0, 2)}${hexStr.slice(2, 4)}${hexStr.slice(4, 6)}`
 }
 
-const MapComponent = () => {
+export const MapComponent = () => {
     const { routes, selectRouteIndex, inDetail } = useContext(RoutesContext)
     const { routeSolution } = useContext(RouteContext)
 
@@ -83,5 +83,3 @@ const MapComponent = () => {
         </MapContainer>
     );
 }
-
-export default MapComponent

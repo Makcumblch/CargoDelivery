@@ -191,7 +191,7 @@ func RoutingProcedure(settingsRoute cargodelivery.RouteSettings, distanceMatrix 
 	for temperature > TMin {
 		newSolution := getNewSolution(bestSolution, 0.5)
 
-		newSolution, err := packing.PackingProcedure(settingsRoute.EvCount, newSolution)
+		newSolution, err := packing.PackingProcedure(settingsRoute, newSolution)
 		if err == nil {
 
 			newSolutionCost := getSolutionCost(distanceMatrix, &newSolution)

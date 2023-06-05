@@ -39,7 +39,7 @@ interface IRoutesContext {
     depo: Depo,
     updateDepo: (id: number, values: any) => void,
     routes: ItemRoutesList[],
-    createRoute: (count: number, TMax: number, TMin: number) => void,
+    createRoute: (count: number, TMax: number, TMin: number, packingType: boolean) => void,
     deleteRoute: (id: number) => void,
     selectRouteIndex: number,
     setSelectRouteIndex: (index: number) => void,
@@ -130,13 +130,15 @@ export const Routes = ({ children }: RoutesProps) => {
         } catch (e) { }
     }
 
-    const createRoute = async (count: number, TMax: number, TMin: number) => {
+    const createRoute = async (count: number, TMax: number, TMin: number, packingType: boolean) => {
+        console.log('packingType', packingType)
         setIsLoadingCreate(true)
         try {
             let newRoute = await request(`api/projects/${currentProjectId}/routes`, 'POST', {
                 evCount: count,
                 tMax: TMax,
-                tMin: TMin
+                tMin: TMin,
+                packingType: packingType,
             }, {
                 Authorization: `Bearer ${token}`
             })

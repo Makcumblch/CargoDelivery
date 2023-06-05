@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Routes, RoutesContext } from '../../contexts/RoutesContext';
-import MapComponent from './Components/MapComponent';
+import {MapComponent} from './Components/MapComponent';
 import SiderMenuRoutesComponent from './Components/SiderMenuRoutesComponent';
 import RouteComponent from './Components/SiderRouteComponent';
 import PackingComponent from './Components/PackingComponent';

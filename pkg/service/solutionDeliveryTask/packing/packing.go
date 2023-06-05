@@ -284,9 +284,6 @@ func Decoder(solution cargodelivery.RouteSolution) (cargodelivery.RouteSolution,
 
 	solution.PackingCost = GetPackingCost(solution)
 
-	return solution, nil
-}
-
 func EvMutation(Items [][]cargodelivery.Item) [][]cargodelivery.Item {
 	clientInd := utils.GetRandInt(len(Items)-1, 0)
 
@@ -307,12 +304,12 @@ func RotateItem(Items [][]cargodelivery.Item) [][]cargodelivery.Item {
 	return Items
 }
 
-func PackingProcedure(EvCount uint, solution cargodelivery.RouteSolution) (cargodelivery.RouteSolution, error) {
+func PackingProcedure(settingsRoute cargodelivery.RouteSettings, solution cargodelivery.RouteSolution) (cargodelivery.RouteSolution, error) {
 	rand.Seed(time.Now().UnixNano())
 
 	bestSolution := solution
 
-	for i := 0; i < int(EvCount); i++ {
+	for i := 0; i < int(settingsRoute.EvCount); i++ {
 
 		newSolution := utils.CloneSolution(bestSolution)
 
