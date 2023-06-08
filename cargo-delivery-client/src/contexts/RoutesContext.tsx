@@ -131,7 +131,6 @@ export const Routes = ({ children }: RoutesProps) => {
     }
 
     const createRoute = async (count: number, TMax: number, TMin: number, packingType: boolean) => {
-        console.log('packingType', packingType)
         setIsLoadingCreate(true)
         try {
             let newRoute = await request(`api/projects/${currentProjectId}/routes`, 'POST', {

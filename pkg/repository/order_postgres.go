@@ -80,7 +80,7 @@ func (o *OrderPostgres) UpdateOrder(clientId, orderId int, input cargodelivery.U
 func (o *OrderPostgres) GetOrdersAndCargos(clientId int) ([]cargodelivery.OrderCargo, error) {
 	var orderCargo []cargodelivery.OrderCargo
 
-	query := fmt.Sprintf("SELECT ord.count, carg.name, carg.width, carg.height, carg.length, carg.weight FROM %s ord LEFT JOIN %s carg ON ord.cargo_id = carg.id WHERE ord.client_id = $1", ordersTable, cargosTable)
+	query := fmt.Sprintf("SELECT carg.id, ord.count, carg.name, carg.width, carg.height, carg.length, carg.weight FROM %s ord LEFT JOIN %s carg ON ord.cargo_id = carg.id WHERE ord.client_id = $1", ordersTable, cargosTable)
 	err := o.db.Select(&orderCargo, query, clientId)
 
 	return orderCargo, err

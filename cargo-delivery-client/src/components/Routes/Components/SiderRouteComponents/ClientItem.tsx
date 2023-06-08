@@ -38,7 +38,7 @@ const ClientItem = ({ index, indexCar, item, cargos }: IClientItemProps) => {
                 </div>
                 <div className={`${!isOpen ? 'hidden' : ''} mt-1 p-1 bg-slate-600 rounded-md`}>
                     {cargos && cargos.map((el, index) => {
-                        return <CargoItem key={index} item={el.cargo} />
+                        return <CargoItem key={index} item={el.cargo} position={el.position} />
                     })}
                 </div>
             </> : null}

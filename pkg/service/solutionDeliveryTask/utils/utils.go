@@ -29,7 +29,26 @@ func CloneSolution(solution cargodelivery.RouteSolution) cargodelivery.RouteSolu
 		newItems := make([][]cargodelivery.Item, 0)
 		for _, clientItems := range route.Items {
 			newItemsClient := make([]cargodelivery.Item, 0)
-			newItemsClient = append(newItemsClient, clientItems...)
+			for _, clientItem := range clientItems {
+				newItemsClient = append(newItemsClient, cargodelivery.Item{Cargo: cargodelivery.Cargo{
+					Id:     clientItem.Cargo.Id,
+					Name:   clientItem.Cargo.Name,
+					Width:  clientItem.Cargo.Width,
+					Height: clientItem.Cargo.Height,
+					Length: clientItem.Cargo.Length,
+					Weight: clientItem.Cargo.Weight,
+				}, Client: cargodelivery.Client{
+					Id:      clientItem.Client.Id,
+					Name:    clientItem.Client.Name,
+					Address: clientItem.Client.Address,
+					CoordX:  clientItem.Client.CoordX,
+					CoordY:  clientItem.Client.CoordY,
+				}, Position: cargodelivery.Position{
+					X: clientItem.Position.X,
+					Y: clientItem.Position.Y,
+					Z: clientItem.Position.Z,
+				}})
+			}
 			newItems = append(newItems, newItemsClient)
 		}
 		newCarRoute.Items = newItems

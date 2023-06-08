@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"errors"
 	"math"
 	"math/rand"
 	"time"
@@ -46,6 +47,8 @@ func transfer(car1Index, indexClient1, car2Index, indexClient2 int, flagExistenc
 	flag := true
 
 	for i := len(car1.Items[indexClient1]) - 1; i >= 0; i-- {
+		car1.FreeLoadCapacity += *car1.Items[indexClient1][i].Cargo.Weight
+		car1.FreeVolume += getVolumeCargo(car1.Items[indexClient1][i].Cargo)
 		newLoad := car2.FreeLoadCapacity - *car1.Items[indexClient1][i].Cargo.Weight
 		newVolume := car2.FreeVolume - getVolumeCargo(car1.Items[indexClient1][i].Cargo)
 
@@ -60,11 +63,11 @@ func transfer(car1Index, indexClient1, car2Index, indexClient2 int, flagExistenc
 			car2.Items[indexClient2] = append(car2.Items[indexClient2], car1.Items[indexClient1][i])
 			car2.FreeLoadCapacity = newLoad
 			car2.FreeVolume = newVolume
-			car1.FreeLoadCapacity += *car1.Items[indexClient1][i].Cargo.Weight
-			car1.FreeVolume += getVolumeCargo(car1.Items[indexClient1][i].Cargo)
 			car1.Items[indexClient1] = append(car1.Items[indexClient1][:i], car1.Items[indexClient1][i+1:]...)
 			flag = false
 		} else {
+			car1.FreeLoadCapacity -= *car1.Items[indexClient1][i].Cargo.Weight
+			car1.FreeVolume -= getVolumeCargo(car1.Items[indexClient1][i].Cargo)
 			break
 		}
 	}
@@ -176,7 +179,7 @@ func getTemperatureCauchy(TMax float32, i int) float32 {
 	return TMax / float32(1+i)
 }
 
-func RoutingProcedure(settingsRoute cargodelivery.RouteSettings, distanceMatrix [][]float32, solution cargodelivery.RouteSolution) cargodelivery.RouteSolution {
+func RoutingProcedure(settingsRoute cargodelivery.RouteSettings, distanceMatrix [][]float32, solution cargodelivery.RouteSolution) (cargodelivery.RouteSolution, error) {
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -184,6 +187,9 @@ func RoutingProcedure(settingsRoute cargodelivery.RouteSettings, distanceMatrix 
 	var TMin = settingsRoute.TMin
 
 	var temperature = TMax
+
+	flag := true
+
 	bestSolution := solution
 	bestSolutionCost := getSolutionCost(distanceMatrix, &bestSolution)
 
@@ -200,6 +206,7 @@ func RoutingProcedure(settingsRoute cargodelivery.RouteSettings, distanceMatrix 
 			if p >= rand.Float64() {
 				bestSolution = newSolution
 				bestSolutionCost = newSolutionCost
+				flag = false
 			}
 		}
 
@@ -207,5 +214,9 @@ func RoutingProcedure(settingsRoute cargodelivery.RouteSettings, distanceMatrix 
 		i++
 	}
 
-	return bestSolution
+	if flag == true {
+		return solution, errors.New("не удалось найти позицию для размещения")
+	}
+
+	return bestSolution, nil
 }

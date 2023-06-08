@@ -19,7 +19,7 @@ export const useHttp = () => {
             if (body && typeof body !== 'string') {
                 body = JSON.stringify(body)
             }
-            response = await fetch(url, { method, body, headers })
+            response = await fetch(url, { method, body, headers: {...headers, 'Content-Type': 'application/json'} })
             const data = await response.json()
             if (!response.ok) {
                 if (response.status === 401) {

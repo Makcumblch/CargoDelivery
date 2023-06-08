@@ -28,6 +28,9 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 		return cargodelivery.RouteSolution{}, cargodelivery.ErrCreateRouteClient
 	}
 
+	idxOrder := 0
+	idxCargo := 0
+
 	routeSolution := cargodelivery.RouteSolution{Distance: 0, Fuel: 0, PackingCost: 0}
 
 	carsRouteSolution := make([]cargodelivery.CarRoute, lenCars)
@@ -57,18 +60,11 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 				continue
 			}
 
-			carsRouteSolution[indexCar].Route.Clients = append(carsRouteSolution[indexCar].Route.Clients, cargodelivery.ClientRoute{
-				Client: clientOrders.Client,
-				Index:  idxClient,
-			})
-			carsRouteSolution[indexCar].Items = append(carsRouteSolution[indexCar].Items, make([]cargodelivery.Item, 0))
-			idxItems := len(carsRouteSolution[indexCar].Items) - 1
+			idxItems := -1
 
-			idxOrder := 0
 			for idxOrder < len(clientOrders.Orders) {
 				order := clientOrders.Orders[idxOrder]
 
-				idxCargo := 0
 				for idxCargo < int(order.Count) {
 					item := cargodelivery.Item{
 						Client:   clientOrders.Client,
@@ -78,6 +74,14 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 					newLoad := carsRouteSolution[indexCar].FreeLoadCapacity - *item.Cargo.Weight
 					newVolume := carsRouteSolution[indexCar].FreeVolume - getVolumeCargo(item.Cargo)
 					if newLoad >= 0 && newVolume >= 0 {
+						if idxItems == -1 {
+							carsRouteSolution[indexCar].Route.Clients = append(carsRouteSolution[indexCar].Route.Clients, cargodelivery.ClientRoute{
+								Client: clientOrders.Client,
+								Index:  idxClient,
+							})
+							carsRouteSolution[indexCar].Items = append(carsRouteSolution[indexCar].Items, make([]cargodelivery.Item, 0))
+							idxItems = len(carsRouteSolution[indexCar].Items) - 1
+						}
 						carsRouteSolution[indexCar].Items[idxItems] = append(carsRouteSolution[indexCar].Items[idxItems], item)
 						carsRouteSolution[indexCar].FreeLoadCapacity = newLoad
 						carsRouteSolution[indexCar].FreeVolume = newVolume
@@ -96,11 +100,13 @@ func getInitSolution(taskData cargodelivery.DeliveryTaskData) (cargodelivery.Rou
 					break
 				}
 				idxOrder++
+				idxCargo = 0
 			}
 			if flagTS {
 				break
 			}
 			idxClient++
+			idxOrder = 0
 		}
 		carsRouteSolution[indexCar].Route.Clients = append(carsRouteSolution[indexCar].Route.Clients, cargodelivery.ClientRoute{
 			Client: taskData.Clients[0].Client,
@@ -124,7 +130,11 @@ func GetDeliverySolution(taskData cargodelivery.DeliveryTaskData, distanceMatrix
 		return cargodelivery.RouteSolution{}, err
 	}
 
-	bestState = routing.RoutingProcedure(settingsRoute, distanceMatrix, bestState)
+	bestState, err = routing.RoutingProcedure(settingsRoute, distanceMatrix, bestState)
+
+	if err != nil {
+		return bestState, err
+	}
 
 	return bestState, nil
 }
